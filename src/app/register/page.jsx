@@ -28,7 +28,9 @@ const {data:signUpData,error} = await authClient.signUp.email({
   email:data.email,
   password:data.password,
   name:data.name,
-  image:data.photo
+  image:data.photo,
+  role:data.role,
+  callbackURL:'/'
 })
 console.log("data",data);
 console.log("signUpData",signUpData);
@@ -167,6 +169,50 @@ console.log("error",error);
                   Min 6 chars, 1 uppercase, 1 number
                 </p>
               </div>
+
+{/* role */}
+{/* Role */}
+<div>
+  <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+    Select Role
+  </label>
+
+  <select
+    {...register('role', {
+      required: 'Role is required',
+    })}
+    defaultValue="user"
+    className="
+      w-full
+      rounded-2xl
+      border
+      border-slate-300
+      dark:border-slate-800
+      bg-white
+      dark:bg-slate-950
+      px-5
+      py-4
+      text-slate-900
+      dark:text-white
+      outline-none
+      focus:border-indigo-500
+      cursor-pointer
+    "
+  >
+    <option value="user">User</option>
+    <option value="creator">Creator</option>
+  </select>
+
+  {errors.role && (
+    <p className="mt-1 text-sm text-red-500">
+      {errors.role.message}
+    </p>
+  )}
+
+  <p className="mt-2 text-sm text-slate-500">
+    Choose how you want to use PromptVault.
+  </p>
+</div>
 
               {/* Register Button */}
               <button
