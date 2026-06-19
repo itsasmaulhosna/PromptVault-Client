@@ -1,4 +1,5 @@
 import Banner from '@/components/Banner';
+import CtaSection from '@/components/Homepage/CtaSection';
 import FaqSection from '@/components/Homepage/FaqSection';
 import FeaturesSection from '@/components/Homepage/FeaturesSection';
 import TestimonialsSection from '@/components/Homepage/TestimonialsSection';
@@ -12,6 +13,7 @@ export default function Home() {
       <ToolCategories />
       <TestimonialsSection />
       <FaqSection />
+      <CtaSection />
     </div>
   );
 }
