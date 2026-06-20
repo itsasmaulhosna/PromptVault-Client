@@ -87,6 +87,7 @@ const [isUploading, setIsUploading] = useState(false)
     .filter(Boolean),
 
   copyCount: 0,
+  accessType: 'free',
   status: 'pending',
 }
 
