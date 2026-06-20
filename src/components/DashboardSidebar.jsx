@@ -42,7 +42,7 @@ export default function DashboardSidebar() {
       key: 'my-prompts',
       label: 'My Prompts',
       icon: FaFileAlt,
-      href: '/dashboard/prompts',
+      href: '/dashboard/creator/my-prompts',
     },
   ]
 

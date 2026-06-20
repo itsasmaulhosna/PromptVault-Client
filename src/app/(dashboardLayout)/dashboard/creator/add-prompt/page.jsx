@@ -297,7 +297,7 @@ const [isUploading, setIsUploading] = useState(false)
 
           <label
             htmlFor="thumbnail"
-            className="
+            className={`
               flex
               min-h-[220px]
               cursor-pointer
@@ -314,7 +314,7 @@ const [isUploading, setIsUploading] = useState(false)
               transition-all
               hover:border-violet-500
               hover:bg-violet-500/5
-            "
+            `}
           >
             <FaCloudUploadAlt
               size={50}
@@ -394,7 +394,7 @@ const [isUploading, setIsUploading] = useState(false)
         <button
   type="submit"
   disabled={isUploading}
-  className="
+  className={`
     w-full
     rounded-xl
     bg-violet-600
@@ -408,7 +408,7 @@ const [isUploading, setIsUploading] = useState(false)
     disabled:cursor-not-allowed
     disabled:opacity-50
     sm:text-lg
-  "
+    `}
 >
   {isUploading ? 'Uploading...' : 'Submit Prompt'}
 </button>
