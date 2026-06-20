@@ -24,7 +24,7 @@ export default function DashboardSidebar() {
       key: 'home',
       label: 'Creator Home',
       icon: FaChartBar,
-      href: '/dashboard',
+      href: '/dashboard/creator',
     },
     {
       key: 'profile',
@@ -36,7 +36,7 @@ export default function DashboardSidebar() {
       key: 'add-prompt',
       label: 'Add Prompt',
       icon: FaPlus,
-      href: '/dashboard/prompts/create',
+      href: '/dashboard/creator/add-prompt',
     },
     {
       key: 'my-prompts',
