@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import DashboardSidebar from '@/components/DashboardSidebar'
+import CreatorSidebar from '@/components/CreatorSidebar'
 import { FaBars } from 'react-icons/fa'
 
 export default function DashboardLayout({ children }) {
@@ -33,14 +33,14 @@ export default function DashboardLayout({ children }) {
             />
 
             <div className="relative w-72 bg-card min-h-screen">
-              <DashboardSidebar />
+              <CreatorSidebar />
             </div>
           </div>
         )}
 
         {/* Desktop Sidebar */}
         <div className="hidden lg:block">
-          <DashboardSidebar />
+          <CreatorSidebar />
         </div>
 
         {/* Content */}

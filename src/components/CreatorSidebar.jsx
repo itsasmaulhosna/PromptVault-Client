@@ -12,7 +12,7 @@ import {
   FaChartBar,
 } from 'react-icons/fa'
 
-export default function DashboardSidebar() {
+export default function CreatorSidebar() {
   const { data: session } = useSession()
 
   const handleLogout = async () => {
