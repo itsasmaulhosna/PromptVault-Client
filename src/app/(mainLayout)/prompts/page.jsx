@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import PromptCard from '@/components/Prompts/PromptCard'
 import PromptFilters from '@/components/Prompts/PromptFilters'
 
@@ -17,10 +17,12 @@ export default function PromptsPage() {
 
   useEffect(() => {
     fetchPrompts()
-  }, [filters, sortBy])
+  }, [filters])
 
   const fetchPrompts = async () => {
     try {
+      setLoading(true)
+
       const query = new URLSearchParams()
 
       if (filters.aiTool !== 'All') {
@@ -30,8 +32,6 @@ export default function PromptsPage() {
       if (filters.category !== 'All') {
         query.append('category', filters.category)
       }
-
-      query.append('sort', sortBy)
 
       const res = await fetch(
         `http://localhost:8080/api/prompts?${query}`
@@ -47,10 +47,33 @@ export default function PromptsPage() {
     }
   }
 
+  const sortedPrompts = useMemo(() => {
+    const sorted = [...prompts]
+
+    if (sortBy === 'popular') {
+      return sorted.sort(
+        (a, b) => (b.rating || 0) - (a.rating || 0)
+      )
+    }
+
+    if (sortBy === 'copied') {
+      return sorted.sort(
+        (a, b) =>
+          (b.copiedCount || 0) -
+          (a.copiedCount || 0)
+      )
+    }
+
+    return sorted.sort(
+      (a, b) =>
+        new Date(b.createdAt) -
+        new Date(a.createdAt)
+    )
+  }, [prompts, sortBy])
+
   return (
     <section className="bg-[#050816] min-h-screen py-10">
       <div className="container mx-auto px-4">
-
         <div className="grid lg:grid-cols-[280px_1fr] gap-8">
 
           <PromptFilters
@@ -103,14 +126,13 @@ export default function PromptsPage() {
             </div>
 
             {/* Cards */}
-
             {loading ? (
               <p className="text-white">
                 Loading...
               </p>
             ) : (
               <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {prompts.map((prompt) => (
+                {sortedPrompts.map((prompt) => (
                   <PromptCard
                     key={prompt._id}
                     prompt={prompt}
@@ -118,11 +140,9 @@ export default function PromptsPage() {
                 ))}
               </div>
             )}
-
           </div>
 
         </div>
-
       </div>
     </section>
   )

@@ -19,21 +19,103 @@ export default function PromptDetailsClient({
 }) {
   const [bookmarks, setBookmarks] =
     useState(prompt.bookmarks || 0)
-
+const [rating, setRating] =
+  useState(prompt.rating || 0)
   const [copies, setCopies] =
     useState(prompt.copyCount || 0)
 
+    const [reviewText, setReviewText] =
+  useState('')
+
+const [reviews, setReviews] =
+  useState([])
   const handleCopy = async () => {
+  try {
     await navigator.clipboard.writeText(
       prompt.content
-    )
+    );
 
-    setCopies(prev => prev + 1)
+    const res = await fetch(
+      `http://localhost:8080/api/prompts/${prompt._id}/copy`,
+      {
+        method: 'PATCH',
+      }
+    );
 
-    toast.success(
-      'Prompt copied successfully'
-    )
+    const data = await res.json();
+
+    if (data.success) {
+      setCopies(data.copyCount);
+
+      toast.success(
+        'Prompt copied successfully'
+      );
+    }
+  } catch (error) {
+    toast.error(
+      'Failed to copy prompt'
+    );
   }
+};
+const handleRating =
+  async value => {
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/prompts/${prompt._id}/rating`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+          body: JSON.stringify({
+            rating: value,
+          }),
+        }
+      )
+
+      const data =
+        await res.json()
+
+      if (data.success) {
+        setRating(data.rating)
+
+        toast.success(
+          'Rating submitted'
+        )
+      }
+    } catch (error) {
+      toast.error(
+        'Failed to submit rating'
+      )
+    }
+  }
+
+  const handleReviewSubmit = () => {
+  if (!reviewText.trim()) {
+    toast.error(
+      'Please write a review first'
+    )
+    return
+  }
+
+  const newReview = {
+    id: Date.now(),
+    review: reviewText,
+    rating,
+  }
+
+  setReviews([
+    newReview,
+    ...reviews,
+  ])
+
+  setReviewText('')
+
+  toast.success(
+    'Review submitted successfully'
+  )
+}
 
   return (
     <section className="min-h-screen bg-[#050816] py-10">
@@ -196,8 +278,9 @@ export default function PromptDetailsClient({
                   </span>
 
                   <PromptRating
-                    initialRating={4}
-                  />
+  initialRating={rating}
+  onRate={handleRating}
+/>
                 </div>
 
               </div>
@@ -235,47 +318,87 @@ export default function PromptDetailsClient({
 
               <div className="mb-4 flex gap-2">
 
-                {[1, 2, 3, 4, 5].map(item => (
-                  <Star
-                    key={item}
-                    size={24}
-                    fill="currentColor"
-                    className="cursor-pointer text-yellow-400"
-                  />
-                ))}
+<PromptRating
+  initialRating={rating}
+  onRate={handleRating}
+/>
 
               </div>
 
               <textarea
-                rows={5}
-                placeholder="Write your feedback..."
-                className="mb-4 w-full rounded-xl border border-white/10 bg-[#060B1A] p-4 text-white outline-none"
-              />
+  rows={5}
+  value={reviewText}
+  onChange={e =>
+    setReviewText(e.target.value)
+  }
+  placeholder="Write your feedback..."
+  className="mb-4 w-full rounded-xl border border-white/10 bg-[#060B1A] p-4 text-white outline-none"
+/>
 
-              <button className="w-full rounded-xl bg-gradient-to-r from-violet-600 to-purple-500 py-3 font-semibold text-white">
-                Submit Review
-              </button>
+            <button
+  onClick={handleReviewSubmit}
+  className="w-full rounded-xl bg-gradient-to-r from-violet-600 to-purple-500 py-3 font-semibold text-white"
+>
+  Submit Review
+</button>
 
             </div>
 
-            <div className="flex min-h-[300px] items-center justify-center rounded-3xl border border-white/10 bg-[#0B1023]">
+            <div className="rounded-3xl border border-white/10 bg-[#0B1023] p-6">
 
-              <div className="text-center">
+  {reviews.length === 0 ? (
+    <div className="flex min-h-[300px] items-center justify-center">
 
+      <div className="text-center">
+
+        <Star
+          size={40}
+          className="mx-auto mb-4 text-gray-500"
+        />
+
+        <p className="text-gray-400">
+          No reviews submitted yet.
+          <br />
+          Be the first to share your thoughts!
+        </p>
+
+      </div>
+
+    </div>
+  ) : (
+    <div className="space-y-4">
+
+      {reviews.map(review => (
+        <div
+          key={review.id}
+          className="rounded-xl border border-white/10 bg-[#060B1A] p-4"
+        >
+
+          <div className="mb-2 flex items-center gap-1">
+
+            {[...Array(review.rating)].map(
+              (_, i) => (
                 <Star
-                  size={40}
-                  className="mx-auto mb-4 text-gray-500"
+                  key={i}
+                  size={16}
+                  className="fill-yellow-400 text-yellow-400"
                 />
+              )
+            )}
 
-                <p className="text-gray-400">
-                  No reviews submitted yet.
-                  <br />
-                  Be the first to share your thoughts!
-                </p>
+          </div>
 
-              </div>
+          <p className="text-gray-300">
+            {review.review}
+          </p>
 
-            </div>
+        </div>
+      ))}
+
+    </div>
+  )}
+
+</div>
 
           </div>
 

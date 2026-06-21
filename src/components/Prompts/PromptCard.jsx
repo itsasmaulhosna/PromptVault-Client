@@ -74,8 +74,10 @@ export default function PromptCard({ prompt }) {
         fill="currentColor"
       />
       <span>
-        {prompt.rating || 0}
-      </span>
+  {Number(
+    prompt.rating || 0
+  ).toFixed(1)}
+</span>
     </div>
 
   </div>
