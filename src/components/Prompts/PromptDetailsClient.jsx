@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+
 import Link from 'next/link'
 import toast from 'react-hot-toast'
-
+import { useSession } from '@/lib/auth-client'
 import {
   Copy,
   Star,
@@ -13,10 +13,12 @@ import {
 import PromptRating from '@/components/Prompts/PromptRating'
 import CreatorInfo from '@/components/CreatorInfo'
 import PromptActions from '@/components/Prompts/PromptActions'
+import { useState } from 'react'
 
 export default function PromptDetailsClient({
   prompt,
 }) {
+  const { data: session } = useSession()
   const [bookmarks, setBookmarks] =
     useState(prompt.bookmarks || 0)
 const [rating, setRating] =
@@ -150,9 +152,11 @@ const isPremiumUser = false
                 </div>
 
                 <PromptActions
-                  bookmarks={bookmarks}
-                  setBookmarks={setBookmarks}
-                />
+  bookmarks={bookmarks}
+  setBookmarks={setBookmarks}
+  userEmail={session?.user?.email}
+  promptId={prompt._id}
+/>
 
               </div>
 
@@ -296,15 +300,9 @@ const isPremiumUser = false
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-400">
-                    Bookmarks
-                  </span>
-
-                  <span className="font-semibold text-white">
-                    {bookmarks}
-                  </span>
-                </div>
+                <span className="font-semibold text-white">
+  {bookmarks}
+</span>
 
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">

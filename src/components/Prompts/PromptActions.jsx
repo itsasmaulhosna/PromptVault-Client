@@ -1,39 +1,55 @@
-'use client'
-
-import { useState } from 'react'
-import toast from 'react-hot-toast'
-
-import {
-  Flag,
-  Bookmark,
-} from 'lucide-react'
-
-import ReportPromptModal from './ReportPromptModal'
+import { Bookmark, Flag } from "lucide-react"
+import ReportPromptModal from "./ReportPromptModal"
+import { useState } from "react"
 
 export default function PromptActions({
   bookmarks,
   setBookmarks,
+  userEmail,
+  promptId,
 }) {
-  const [reportOpen, setReportOpen] =
-    useState(false)
+  const [reportOpen, setReportOpen] = useState(false)
+  const [isBookmarked, setIsBookmarked] = useState(false)
 
-  const [isBookmarked, setIsBookmarked] =
-    useState(false)
+  const handleBookmark = async () => {
+    if (!userEmail || !promptId) return
 
-  const handleBookmark = () => {
     if (isBookmarked) {
-      setBookmarks(prev => prev - 1)
-
-      toast('Bookmark removed')
-    } else {
-      setBookmarks(prev => prev + 1)
-
-      toast.success(
-        'Prompt bookmarked'
+      const res = await fetch(
+        'http://localhost:8080/api/bookmarks',
+        {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userEmail, promptId }),
+        }
       )
-    }
 
-    setIsBookmarked(!isBookmarked)
+      const data = await res.json()
+
+      if (data.success) {
+        setBookmarks((p) => Math.max(0, p - 1))
+        setIsBookmarked(false)
+        toast.success('Bookmark removed')
+      }
+
+    } else {
+      const res = await fetch(
+        'http://localhost:8080/api/bookmarks',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userEmail, promptId }),
+        }
+      )
+
+      const data = await res.json()
+
+      if (data.success) {
+        setBookmarks((p) => p + 1)
+        setIsBookmarked(true)
+        toast.success('Bookmarked')
+      }
+    }
   }
 
   return (
@@ -44,18 +60,12 @@ export default function PromptActions({
       >
         <Bookmark
           size={18}
-          fill={
-            isBookmarked
-              ? 'currentColor'
-              : 'none'
-          }
+          fill={isBookmarked ? 'currentColor' : 'none'}
         />
       </button>
 
       <button
-        onClick={() =>
-          setReportOpen(true)
-        }
+        onClick={() => setReportOpen(true)}
         className="rounded-xl border border-white/10 bg-white/5 p-3 text-gray-300"
       >
         <Flag size={18} />
@@ -63,9 +73,7 @@ export default function PromptActions({
 
       <ReportPromptModal
         open={reportOpen}
-        onClose={() =>
-          setReportOpen(false)
-        }
+        onClose={() => setReportOpen(false)}
       />
     </>
   )
