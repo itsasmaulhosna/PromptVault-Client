@@ -14,15 +14,27 @@ export default function MyPromptsPage() {
   const [prompts, setPrompts] = useState([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetch('http://localhost:8080/api/prompts')
-      .then((res) => res.json())
-      .then((data) => {
-        setPrompts(data)
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
-  }, [])
+useEffect(() => {
+  const fetchPrompts = async () => {
+    if (!session?.user?.email) return
+
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/prompts/user/${session.user.email}`
+      )
+
+      const data = await res.json()
+
+      setPrompts(data.data || [])   // ✅ FIXED
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  fetchPrompts()
+}, [session])
 
   if (loading) {
     return (

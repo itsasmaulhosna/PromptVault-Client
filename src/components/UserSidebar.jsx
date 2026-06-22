@@ -115,7 +115,7 @@ export default function UserSidebar() {
             <Link
               key={key}
               href={href}
-              className="
+              className={`
                 flex
                 items-center
                 gap-3
@@ -128,7 +128,7 @@ export default function UserSidebar() {
                 transition-all
                 hover:bg-accent
                 hover:text-foreground
-              "
+              `}
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted">
                 <Icon size={16} />
@@ -143,7 +143,7 @@ export default function UserSidebar() {
         <div className="border-t border-border p-3 space-y-2">
           <Link
             href="/"
-            className="
+            className={`
               flex
               items-center
               gap-3
@@ -155,7 +155,7 @@ export default function UserSidebar() {
               text-muted-foreground
               hover:bg-accent
               hover:text-foreground
-            "
+            `}
           >
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted">
               <FaHome size={16} />
@@ -166,7 +166,7 @@ export default function UserSidebar() {
 
           <button
             onClick={handleLogout}
-            className="
+            className={`
               flex
               w-full
               items-center
@@ -178,7 +178,7 @@ export default function UserSidebar() {
               font-medium
               text-red-500
               hover:bg-red-500/10
-            "
+            `}
           >
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-500/10">
               <FaSignOutAlt size={16} />

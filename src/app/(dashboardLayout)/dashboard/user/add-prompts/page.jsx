@@ -4,8 +4,12 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { FaCloudUploadAlt } from 'react-icons/fa'
+import { useSession } from '@/lib/auth-client'
+
 
 export default function AddPromptPage() {
+    const { data: session } = useSession()
+    
   const router = useRouter()
 
   const [thumbnail, setThumbnail] = useState('')
@@ -77,18 +81,26 @@ const [isUploading, setIsUploading] = useState(false)
 
   try {
     const payload = {
-  ...formData,
-
-  thumbnail,
-
+  title: formData.title,
+  description: formData.description,
+  content: formData.content,
+  category: formData.category,
+  aiTool: formData.aiTool,
   tags: formData.tags
     .split(',')
-    .map((tag) => tag.trim())
+    .map((t) => t.trim())
     .filter(Boolean),
 
+  difficulty: formData.difficulty,
+  visibility: formData.visibility,
+  thumbnail,
+
   copyCount: 0,
-  accessType: 'free',
+  rating: 0,
   status: 'pending',
+
+  userEmail: session?.user?.email,
+  userName: session?.user?.name,
 }
 
     const response = await fetch(
@@ -106,7 +118,7 @@ const [isUploading, setIsUploading] = useState(false)
 
     if (data.success) {
       alert('Prompt submitted successfully!')
-      router.push('/dashboard/creator/my-prompts')
+      router.push('/dashboard/user/my-prompts')
     }
   } catch (error) {
     console.error(error)
