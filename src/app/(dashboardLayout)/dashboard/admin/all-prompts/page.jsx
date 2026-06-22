@@ -6,7 +6,9 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaTrash,
+  FaCrown,
 } from 'react-icons/fa'
+import Link from 'next/link'
 export default function AllPromptsPage() {
   const [prompts, setPrompts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -55,7 +57,29 @@ const handleReject = async (id) => {
 
   fetchPrompts()
 }
+const handleAccessType = async (
+  id,
+  accessType
+) => {
+  try {
+    await fetch(
+      `http://localhost:8080/api/prompts/${id}/access`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          accessType,
+        }),
+      }
+    )
 
+    fetchPrompts()
+  } catch (error) {
+    console.error(error)
+  }
+}
 const handleDelete = async (id) => {
   const confirmDelete = window.confirm(
     'Delete this prompt?'
@@ -109,6 +133,9 @@ const handleDelete = async (id) => {
                 <th className="p-4 text-left">
                   Visibility
                 </th>
+                <th className="p-4 text-left">
+  Access
+</th>
 
                 <th className="p-4 text-left">
                   Status
@@ -157,6 +184,17 @@ const handleDelete = async (id) => {
                         {prompt.visibility}
                       </span>
                     </td>
+                    <td className="p-4">
+  <span
+    className={`rounded-full px-3 py-1 text-xs ${
+      prompt.accessType === 'premium'
+        ? 'bg-yellow-500/10 text-yellow-500'
+        : 'bg-blue-500/10 text-blue-500'
+    }`}
+  >
+    {prompt.accessType || 'free'}
+  </span>
+</td>
 
                     <td className="p-4">
                       <span
@@ -182,32 +220,60 @@ const handleDelete = async (id) => {
   <div className="flex items-center gap-3">
 
     {/* View */}
-    <button
-      className="text-blue-300 hover:scale-110 transition"
-    >
-      <FaEye size={18} />
-    </button>
+    <Link
+  href={`/prompts/${prompt._id}`}
+  className="text-blue-300 transition hover:scale-110"
+>
+  <FaEye size={18} />
+</Link>
 
     {/* Approve */}
-    <button
-      onClick={() =>
-        handleApprove(prompt._id)
-      }
-      className="text-green-300 hover:scale-110 transition"
-    >
-      <FaCheckCircle size={18} />
-    </button>
+    {prompt.status !== 'approved' && (
+  <button
+    onClick={() =>
+      handleApprove(prompt._id)
+    }
+    className="text-green-300 hover:scale-110 transition"
+  >
+    <FaCheckCircle size={18} />
+  </button>
+)}
 
     {/* Reject */}
-    <button
-      onClick={() =>
-        handleReject(prompt._id)
-      }
-      className="text-yellow-200 hover:scale-110 transition"
-    >
-      <FaTimesCircle size={18} />
-    </button>
+    {prompt.status !== 'rejected' && (
+  <button
+    onClick={() =>
+      handleReject(prompt._id)
+    }
+    className="text-yellow-200 hover:scale-110 transition"
+  >
+    <FaTimesCircle size={18} />
+  </button>
+)}
 
+{/* access */}
+<button
+  onClick={() =>
+    handleAccessType(
+      prompt._id,
+      prompt.accessType === 'premium'
+        ? 'free'
+        : 'premium'
+    )
+  }
+  title={
+    prompt.accessType === 'premium'
+      ? 'Make Free'
+      : 'Make Premium'
+  }
+  className={`hover:scale-110 transition ${
+    prompt.accessType === 'premium'
+      ? 'text-yellow-400'
+      : 'text-gray-400'
+  }`}
+>
+  <FaCrown size={18} />
+</button>
     {/* Delete */}
     <button
       onClick={() =>

@@ -7,6 +7,8 @@ import {
   Trash2,
   BarChart3,
 } from 'lucide-react'
+import { FaEye, FaTrash } from 'react-icons/fa'
+import Link from 'next/link'
 
 export default function MyPromptsPage() {
   const [prompts, setPrompts] = useState([])
@@ -29,7 +31,22 @@ export default function MyPromptsPage() {
       </div>
     )
   }
+const handleDelete = async (id) => {
+  const confirmDelete = window.confirm(
+    'Delete this prompt?'
+  )
 
+  if (!confirmDelete) return
+
+  await fetch(
+    `http://localhost:8080/api/prompts/${id}`,
+    {
+      method: 'DELETE',
+    }
+  )
+
+  fetchPrompts()
+}
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -152,9 +169,12 @@ export default function MyPromptsPage() {
 
                   <td className="p-5">
                     <div className="flex gap-2">
-                      <button className="rounded-lg border p-2">
-                        <Eye size={18} />
-                      </button>
+                      <Link
+                        href={`/prompts/${prompt._id}`}
+                        className="text-blue-300 transition hover:scale-110"
+                      >
+                        <FaEye size={18} />
+                      </Link>
 
                       <button className="rounded-lg border p-2">
                         <Pencil size={18} />
@@ -164,9 +184,14 @@ export default function MyPromptsPage() {
                         <BarChart3 size={18} />
                       </button>
 
-                      <button className="rounded-lg border border-red-500 p-2 text-red-500">
-                        <Trash2 size={18} />
-                      </button>
+                      <button
+                            onClick={() =>
+                              handleDelete(prompt._id)
+                            }
+                            className="text-red-400 hover:scale-110 transition"
+                          >
+                            <FaTrash size={18} />
+                          </button>
                     </div>
                   </td>
                 </tr>

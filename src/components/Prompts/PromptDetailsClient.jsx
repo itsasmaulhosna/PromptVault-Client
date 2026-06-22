@@ -116,6 +116,7 @@ const handleRating =
     'Review submitted successfully'
   )
 }
+const isPremiumUser = false
 
   return (
     <section className="min-h-screen bg-[#050816] py-10">
@@ -181,19 +182,52 @@ const handleRating =
                     Prompt Template
                   </h2>
 
-                  <button
-                    onClick={handleCopy}
-                    className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-white transition hover:bg-white/10"
-                  >
-                    <Copy size={16} />
-                    Copy
-                  </button>
+                  {!(prompt.accessType === 'premium' &&
+!isPremiumUser) && (
+
+  <button
+    onClick={handleCopy}
+    className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-white"
+  >
+    <Copy size={16} />
+    Copy
+  </button>
+
+)}
 
                 </div>
 
-                <pre className="overflow-auto whitespace-pre-wrap rounded-xl border border-white/5 bg-black/20 p-5 text-sm leading-7 text-purple-300">
-                  {prompt.content}
-                </pre>
+                {prompt.accessType === 'premium' &&
+!isPremiumUser ? (
+
+  <div className="rounded-2xl border border-white/10 bg-[#060B1A] p-10 text-center">
+
+    <h3 className="mb-4 text-3xl font-bold text-white">
+      Premium Prompt Content Locked
+    </h3>
+
+    <p className="mx-auto mb-8 max-w-xl text-gray-400">
+      Unlock access to this prompt,
+      review options and duplicate copies
+      with a one-time upgrade.
+    </p>
+
+    <Link
+      href="/pricing"
+      className="inline-flex rounded-xl bg-cyan-500 px-8 py-4 font-semibold text-black"
+    >
+      Subscribe to Premium ($5)
+    </Link>
+
+  </div>
+
+) : (
+
+  <pre className="overflow-auto whitespace-pre-wrap rounded-xl border border-white/5 bg-black/20 p-5 text-sm leading-7 text-purple-300">
+    {prompt.content}
+  </pre>
+
+)}
 
               </div>
 
@@ -301,108 +335,148 @@ const handleRating =
 
         </div>
 
+        {/* reviewa */}
         {/* Reviews Section */}
-        <div className="mt-16">
 
-          <h2 className="mb-8 text-4xl font-bold text-white">
-            Community Reviews
-          </h2>
+{prompt.accessType === 'premium' && !isPremiumUser ? (
 
-          <div className="grid gap-8 lg:grid-cols-2">
+  <div className="mt-16 grid gap-8 lg:grid-cols-2">
 
-            <div className="rounded-3xl border border-white/10 bg-[#0B1023] p-6">
+    {/* Pricing Card */}
+    <div className="rounded-3xl border border-white/10 bg-[#0B1023] p-8">
+      <span className="rounded-full bg-cyan-500/20 px-4 py-2 text-sm text-cyan-400">
+        LIFETIME PLAN
+      </span>
 
-              <h3 className="mb-6 text-2xl font-semibold text-white">
-                Submit a Review
-              </h3>
+      <h2 className="mt-6 text-4xl font-bold text-white">
+        AIverse Pro Access
+      </h2>
 
-              <div className="mb-4 flex gap-2">
+      <div className="mt-6 flex items-end gap-2">
+        <span className="text-6xl font-bold text-white">
+          $5.00
+        </span>
 
-<PromptRating
-  initialRating={rating}
-  onRate={handleRating}
-/>
+        <span className="mb-2 text-gray-400">
+          / one-time
+        </span>
+      </div>
 
-              </div>
+      <ul className="mt-8 space-y-4 text-gray-300">
+        <li>✓ Unlock all Premium prompts</li>
+        <li>✓ Unlimited copy actions</li>
+        <li>✓ Submit and view reviews</li>
+        <li>✓ Lifetime ownership</li>
+      </ul>
+    </div>
 
-              <textarea
-  rows={5}
-  value={reviewText}
-  onChange={e =>
-    setReviewText(e.target.value)
-  }
-  placeholder="Write your feedback..."
-  className="mb-4 w-full rounded-xl border border-white/10 bg-[#060B1A] p-4 text-white outline-none"
-/>
+    {/* Payment Card */}
+    <div className="rounded-3xl border border-white/10 bg-[#0B1023] p-8">
+      <h3 className="mb-6 text-2xl font-semibold text-white">
+        Card Information
+      </h3>
 
-            <button
-  onClick={handleReviewSubmit}
-  className="w-full rounded-xl bg-gradient-to-r from-violet-600 to-purple-500 py-3 font-semibold text-white"
->
-  Submit Review
-</button>
+      <button className="w-full rounded-xl bg-gradient-to-r from-violet-600 to-purple-500 py-4 font-semibold text-white">
+        Pay One-time $5.00
+      </button>
+    </div>
+
+  </div>
+
+) : (
+
+  <div className="mt-16">
+
+    <h2 className="mb-8 text-4xl font-bold text-white">
+      Community Reviews ({reviews.length})
+    </h2>
+
+    <div className="grid gap-8 lg:grid-cols-2">
+
+      {/* Left */}
+      <div className="rounded-3xl border border-white/10 bg-[#0B1023] p-8">
+
+        <h3 className="mb-6 text-2xl font-semibold text-white">
+          Submit a Review
+        </h3>
+
+        <div className="mb-4">
+          <PromptRating
+            initialRating={rating}
+            onRate={handleRating}
+          />
+        </div>
+
+        <textarea
+          rows={6}
+          value={reviewText}
+          onChange={(e) =>
+            setReviewText(e.target.value)
+          }
+          placeholder="Write your feedback..."
+          className="mb-4 w-full rounded-xl border border-white/10 bg-[#060B1A] p-4 text-white"
+        />
+
+        <button
+          onClick={handleReviewSubmit}
+          className="w-full rounded-xl bg-gradient-to-r from-violet-600 to-purple-500 py-4 font-semibold text-white"
+        >
+          Submit Review
+        </button>
+
+      </div>
+
+      {/* Right */}
+      <div className="rounded-3xl border border-white/10 bg-[#0B1023] p-8">
+
+        {reviews.length === 0 ? (
+
+          <div className="flex min-h-[300px] items-center justify-center">
+
+            <div className="text-center">
+
+              <Star
+                size={50}
+                className="mx-auto mb-4 text-gray-500"
+              />
+
+              <p className="text-gray-400">
+                No reviews submitted yet.
+                <br />
+                Be the first to share your thoughts!
+              </p>
 
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-[#0B1023] p-6">
+          </div>
 
-  {reviews.length === 0 ? (
-    <div className="flex min-h-[300px] items-center justify-center">
+        ) : (
 
-      <div className="text-center">
+          <div className="space-y-4">
 
-        <Star
-          size={40}
-          className="mx-auto mb-4 text-gray-500"
-        />
+            {reviews.map((review) => (
+              <div
+                key={review.id}
+                className="rounded-xl border border-white/10 bg-[#060B1A] p-4"
+              >
+                <p className="text-gray-300">
+                  {review.review}
+                </p>
+              </div>
+            ))}
 
-        <p className="text-gray-400">
-          No reviews submitted yet.
-          <br />
-          Be the first to share your thoughts!
-        </p>
+          </div>
+
+        )}
 
       </div>
 
     </div>
-  ) : (
-    <div className="space-y-4">
 
-      {reviews.map(review => (
-        <div
-          key={review.id}
-          className="rounded-xl border border-white/10 bg-[#060B1A] p-4"
-        >
+  </div>
 
-          <div className="mb-2 flex items-center gap-1">
-
-            {[...Array(review.rating)].map(
-              (_, i) => (
-                <Star
-                  key={i}
-                  size={16}
-                  className="fill-yellow-400 text-yellow-400"
-                />
-              )
-            )}
-
-          </div>
-
-          <p className="text-gray-300">
-            {review.review}
-          </p>
-
-        </div>
-      ))}
-
-    </div>
-  )}
-
-</div>
-
-          </div>
-
-        </div>
+)}
+        
 
       </div>
     </section>

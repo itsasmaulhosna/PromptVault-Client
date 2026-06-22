@@ -1,6 +1,9 @@
 'use client'
 
 import { Search, Sparkles, ArrowRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+
 
 export default function Banner() {
 const tags = [
@@ -11,6 +14,8 @@ const tags = [
 'Perplexity',
 'Image Generation',
 ]
+const router = useRouter()
+const [search, setSearch] = useState('')
 
 return ( <section className="relative overflow-hidden bg-white dark:bg-[#020817] py-20 md:py-28 transition-colors duration-300">
 {/* Background Glow */} <div className="absolute inset-0 dark:bg-[radial-gradient(circle_at_top,#312e81_0%,transparent_45%)]" />
@@ -45,29 +50,43 @@ return ( <section className="relative overflow-hidden bg-white dark:bg-[#020817]
       <Search className="ml-4 h-5 w-5 text-slate-500" />
 
       <input
-        type="text"
-        placeholder="Search prompts, tags or AI tools..."
-        className="flex-1 bg-transparent px-4 py-3 text-base text-slate-900 dark:text-white outline-none placeholder:text-slate-500"
-      />
+  type="text"
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  onKeyDown={(e) => {
+    if (e.key === 'Enter') {
+      router.push(`/prompts?q=${encodeURIComponent(search)}`)
+    }
+  }}
+  placeholder="Search prompts, tags or AI tools..."
+  className="flex-1 bg-transparent px-4 py-3 text-base text-slate-900 dark:text-white outline-none placeholder:text-slate-500"
+/>
 
-      <button className="rounded-xl bg-indigo-600 px-6 py-3 text-base font-medium text-white transition hover:bg-indigo-700">
+      <button onClick={() =>
+  router.push(`/prompts?q=${encodeURIComponent(search)}`)
+} className="rounded-xl bg-indigo-600 px-6 py-3 text-base font-medium text-white transition hover:bg-indigo-700">
         Search
       </button>
     </div>
 
     {/* Tags */}
     <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-      <span className="text-slate-500">Trending:</span>
+  <span className="text-slate-500">
+    Trending:
+  </span>
 
-      {tags.map(tag => (
-        <button
-          key={tag}
-          className="rounded-full border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-900/50 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 transition hover:border-indigo-500 hover:text-indigo-500"
-        >
-          {tag}
-        </button>
-      ))}
-    </div>
+  {tags.map(tag => (
+    <button
+      key={tag}
+      onClick={() =>
+        router.push(`/prompts?q=${encodeURIComponent(tag)}`)
+      }
+      className="rounded-full border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-900/50 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 transition hover:border-indigo-500 hover:text-indigo-500"
+    >
+      {tag}
+    </button>
+  ))}
+</div>
 
     {/* CTA Buttons */}
     <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">

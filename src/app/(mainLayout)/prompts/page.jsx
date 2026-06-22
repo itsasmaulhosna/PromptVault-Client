@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import PromptCard from '@/components/Prompts/PromptCard'
 import PromptFilters from '@/components/Prompts/PromptFilters'
-
+import { useSearchParams } from 'next/navigation'
 export default function PromptsPage() {
   const [prompts, setPrompts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -14,6 +14,11 @@ export default function PromptsPage() {
   })
 
   const [sortBy, setSortBy] = useState('latest')
+
+  const searchParams = useSearchParams()
+
+const search =
+  searchParams.get('q')?.toLowerCase() || ''
 
   useEffect(() => {
     fetchPrompts()
@@ -70,6 +75,21 @@ export default function PromptsPage() {
         new Date(a.createdAt)
     )
   }, [prompts, sortBy])
+
+  const filteredPrompts = useMemo(() => {
+  if (!search) return sortedPrompts
+
+  return sortedPrompts.filter(prompt => {
+    return (
+      prompt.title?.toLowerCase().includes(search) ||
+      prompt.description?.toLowerCase().includes(search) ||
+      prompt.aiTool?.toLowerCase().includes(search) ||
+      prompt.tags?.some(tag =>
+        tag.toLowerCase().includes(search)
+      )
+    )
+  })
+}, [sortedPrompts, search])
 
   return (
     <section className="bg-[#050816] min-h-screen py-10">
@@ -132,7 +152,7 @@ export default function PromptsPage() {
               </p>
             ) : (
               <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {sortedPrompts.map((prompt) => (
+                {filteredPrompts.map((prompt) => (
                   <PromptCard
                     key={prompt._id}
                     prompt={prompt}
