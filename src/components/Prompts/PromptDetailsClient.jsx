@@ -13,12 +13,13 @@ import {
 import PromptRating from '@/components/Prompts/PromptRating'
 import CreatorInfo from '@/components/CreatorInfo'
 import PromptActions from '@/components/Prompts/PromptActions'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function PromptDetailsClient({
   prompt,
 }) {
   const { data: session } = useSession()
+  
   const [bookmarks, setBookmarks] =
     useState(prompt.bookmarks || 0)
 const [rating, setRating] =
@@ -93,31 +94,49 @@ const handleRating =
     }
   }
 
-  const handleReviewSubmit = () => {
-  if (!reviewText.trim()) {
-    toast.error(
-      'Please write a review first'
-    )
-    return
-  }
+  const handleReviewSubmit = async () => {
+  if (!reviewText.trim()) return
 
-  const newReview = {
-    id: Date.now(),
-    review: reviewText,
+  const payload = {
+    promptId: prompt._id,
+    userEmail: session?.user?.email,
+    userName: session?.user?.name,
     rating,
+    text: reviewText,
   }
 
-  setReviews([
-    newReview,
-    ...reviews,
-  ])
+  const res = await fetch('http://localhost:8080/api/reviews', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
 
-  setReviewText('')
+  const data = await res.json()
 
-  toast.success(
-    'Review submitted successfully'
-  )
+  if (data.success) {
+    toast.success('Review submitted')
+
+    setReviewText('')
+
+    // refresh reviews
+    fetchReviews()
+  }
 }
+
+
+const fetchReviews = async () => {
+  const res = await fetch(
+    `http://localhost:8080/api/reviews/${prompt._id}`
+  )
+
+  const data = await res.json()
+
+  setReviews(data.data || [])
+}
+
+useEffect(() => {
+  fetchReviews()
+}, [])
 const isPremiumUser = false
 
   return (
@@ -217,11 +236,11 @@ const isPremiumUser = false
     </p>
 
     <Link
-      href="/pricing"
-      className="inline-flex rounded-xl bg-cyan-500 px-8 py-4 font-semibold text-black"
-    >
-      Subscribe to Premium ($5)
-    </Link>
+  href="/upgrade"
+  className="inline-flex rounded-xl bg-cyan-500 px-8 py-4 font-semibold text-black"
+>
+  Subscribe to Premium ($5)
+</Link>
 
   </div>
 
@@ -453,15 +472,19 @@ const isPremiumUser = false
           <div className="space-y-4">
 
             {reviews.map((review) => (
-              <div
-                key={review.id}
-                className="rounded-xl border border-white/10 bg-[#060B1A] p-4"
-              >
-                <p className="text-gray-300">
-                  {review.review}
-                </p>
-              </div>
-            ))}
+  <div
+    key={review._id}
+    className="rounded-xl border border-white/10 bg-[#060B1A] p-4"
+  >
+    <p className="text-white font-medium">
+      {review.userName}
+    </p>
+
+    <p className="text-gray-300">
+      {review.text}
+    </p>
+  </div>
+))}
 
           </div>
 

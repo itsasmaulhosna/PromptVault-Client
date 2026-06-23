@@ -22,6 +22,12 @@ export default function Navbar() {
 
   const { data: session, isPending } = useSession()
   const user = session?.user
+  const dashboardLink =
+  user?.role === 'admin'
+    ? '/dashboard/admin'
+    : user?.role === 'creator'
+    ? '/dashboard/creator'
+    : '/dashboard/user/profile'
 
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -104,13 +110,12 @@ export default function Navbar() {
             ) : user ? (
               <div className="flex items-center gap-3">
                 <Link
-                  href="/dashboard"
-                  className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 hover:bg-accent transition"
-                >
-                  <LayoutDashboard size={18} />
-                  <span>Dashboard</span>
-                </Link>
-
+  href={dashboardLink}
+  className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 hover:bg-accent transition"
+>
+  <LayoutDashboard size={18} />
+  <span>Dashboard</span>
+</Link>
                 <Image
                   src={user.image || '/avatar.png'}
                   alt={user.name || 'User'}
@@ -219,13 +224,13 @@ export default function Navbar() {
                 </div>
 
                 <Link
-                  href="/dashboard"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-2 rounded-lg border px-4 py-3"
-                >
-                  <LayoutDashboard size={18} />
-                  Dashboard
-                </Link>
+  href={dashboardLink}
+  onClick={() => setIsOpen(false)}
+  className="flex items-center gap-2 rounded-lg border px-4 py-3"
+>
+  <LayoutDashboard size={18} />
+  Dashboard
+</Link>
 
                 <button
                   onClick={handleLogout}

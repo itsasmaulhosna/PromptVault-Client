@@ -6,10 +6,10 @@ import { Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { authClient } from '@/lib/auth-client'
-
+import { useRouter } from 'next/navigation'
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
-
+const router = useRouter()
   const {
     register,
     handleSubmit,
@@ -23,21 +23,30 @@ const handleGoogleSignIn =async()=>{
       }
 
 
-  const onSubmit =async data => {
-const {data:signUpData,error} = await authClient.signUp.email({
-  email:data.email,
-  password:data.password,
-  name:data.name,
-  image:data.photo,
-  role:data.role,
-  callbackURL:'/'
-})
-console.log("data",data);
-console.log("signUpData",signUpData);
-console.log("error",error);
-    
-  }
+  const onSubmit = async data => {
+  try {
+    const result =
+      await authClient.signUp.email({
+        email: data.email,
+        password: data.password,
+        name: data.name,
+        image: data.photo,
+        role: data.role,
+        callbackURL: '/',
+      })
 
+    console.log('result', result)
+
+    if (result.error) {
+      alert(result.error.message)
+      return
+    }
+
+    router.push('/')
+  } catch (error) {
+    console.error(error)
+  }
+}
   return (
     <div className="min-h-screen bg-white dark:bg-[#020817] transition-colors duration-300">
       <div className="grid min-h-screen lg:grid-cols-2">
