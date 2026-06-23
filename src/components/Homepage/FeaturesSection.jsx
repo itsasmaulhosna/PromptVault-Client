@@ -1,5 +1,5 @@
 'use client'
-
+import { motion } from 'framer-motion'
 import {
   ShieldCheck,
   Sparkles,
@@ -47,7 +47,28 @@ const features = [
     icon: Rocket,
   },
 ]
+const containerVariants = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+}
 
+const itemVariants = {
+  hidden: {
+    opacity: 0,
+    y: 40,
+  },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+    },
+  },
+}
 const stats = [
   {
     number: '10K+',
@@ -79,142 +100,169 @@ export default function FeaturesSection() {
 
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="mx-auto mb-20 max-w-4xl text-center">
-          <span
+        <motion.div
+  initial={{
+    opacity: 0,
+    y: 40,
+  }}
+  whileInView={{
+    opacity: 1,
+    y: 0,
+  }}
+  viewport={{ once: true }}
+  transition={{
+    duration: 0.7,
+  }}
+  className="mx-auto mb-20 max-w-4xl text-center"
+>
+  <span
+    className="
+      mb-6
+      inline-flex
+      items-center
+      rounded-full
+      border
+      border-violet-500/20
+      bg-gradient-to-r
+      from-violet-500/10
+      to-blue-500/10
+      px-5
+      py-2
+      text-sm
+      font-semibold
+      uppercase
+      tracking-wider
+      text-violet-500
+    "
+  >
+    Why PromptVault
+  </span>
+
+  <h2 className="mb-6 text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">
+    Everything you need to
+    <span className="block bg-gradient-to-r from-violet-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">
+      master AI prompts
+    </span>
+  </h2>
+
+  <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+    Discover, create, save and share high-quality AI prompts
+    that help you achieve better results faster.
+  </p>
+</motion.div>
+
+        {/* Features */}
+        <motion.div
+  variants={containerVariants}
+  initial="hidden"
+  whileInView="show"
+  viewport={{ once: true }}
+  className="grid gap-6 md:grid-cols-2 xl:grid-cols-3"
+>
+  {features.map((feature, index) => {
+    const Icon = feature.icon
+
+    return (
+      <motion.div
+        key={index}
+        variants={itemVariants}
+        whileHover={{
+          y: -10,
+          scale: 1.02,
+        }}
+        className="
+          group
+          relative
+          overflow-hidden
+          rounded-3xl
+          border
+          border-border
+          bg-card
+          p-8
+          transition-all
+          duration-300
+          hover:border-violet-500/30
+          hover:shadow-[0_20px_50px_rgba(139,92,246,0.15)]
+        "
+      >
+        <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+          <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-violet-500/10 blur-3xl" />
+        </div>
+
+        <div className="relative">
+          <div
             className="
               mb-6
-              inline-flex
+              flex
+              h-16
+              w-16
               items-center
-              rounded-full
+              justify-center
+              rounded-2xl
               border
               border-violet-500/20
-              bg-gradient-to-r
+              bg-gradient-to-br
               from-violet-500/10
               to-blue-500/10
-              px-5
-              py-2
-              text-sm
-              font-semibold
-              uppercase
-              tracking-wider
               text-violet-500
             "
           >
-            Why PromptVault
-          </span>
+            <Icon size={30} />
+          </div>
 
-          <h2 className="mb-6 text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl">
-            Everything you need to
-            <span className="block bg-gradient-to-r from-violet-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">
-              master AI prompts
-            </span>
-          </h2>
+          <h3 className="mb-4 text-2xl font-bold text-foreground">
+            {feature.title}
+          </h3>
 
-          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            Discover, create, save and share high-quality AI prompts
-            that help you achieve better results faster.
+          <p className="leading-relaxed text-muted-foreground">
+            {feature.description}
           </p>
         </div>
-
-        {/* Features */}
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {features.map((feature, index) => {
-            const Icon = feature.icon
-
-            return (
-              <div
-                key={index}
-                className="
-                  group
-                  relative
-                  overflow-hidden
-                  rounded-3xl
-                  border
-                  border-border
-                  bg-card
-                  p-8
-                  transition-all
-                  duration-300
-                  hover:-translate-y-2
-                  hover:border-violet-500/30
-                  hover:shadow-[0_20px_50px_rgba(139,92,246,0.15)]
-                "
-              >
-                {/* Glow */}
-                <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                  <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-violet-500/10 blur-3xl" />
-                </div>
-
-                <div className="relative">
-                  {/* Icon Box */}
-                  <div
-                    className="
-                      mb-6
-                      flex
-                      h-16
-                      w-16
-                      items-center
-                      justify-center
-                      rounded-2xl
-                      border
-                      border-violet-500/20
-                      bg-gradient-to-br
-                      from-violet-500/10
-                      to-blue-500/10
-                      text-violet-500
-                      transition-all
-                      duration-300
-                      group-hover:scale-110
-                    "
-                  >
-                    <Icon size={30} />
-                  </div>
-
-                  <h3 className="mb-4 text-2xl font-bold text-foreground">
-                    {feature.title}
-                  </h3>
-
-                  <p className="leading-relaxed text-muted-foreground">
-                    {feature.description}
-                  </p>
-                </div>
-              </div>
-            )
-          })}
-        </div>
+      </motion.div>
+    )
+  })}
+</motion.div>
 
         {/* Stats */}
-        <div className="mt-20 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {stats.map((item, index) => (
-            <div
-              key={index}
-              className="
-                rounded-3xl
-                border
-                border-border
-                bg-card/50
-                p-8
-                text-center
-                backdrop-blur-sm
-                transition-all
-                duration-300
-                hover:-translate-y-1
-                hover:border-violet-500/30
-                hover:shadow-[0_20px_50px_rgba(139,92,246,0.15)]
-              "
-            >
-              <h3 className="mb-2 text-4xl font-bold">
-                <span className="bg-gradient-to-r from-violet-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">
-                  {item.number}
-                </span>
-              </h3>
+        <motion.div
+  variants={containerVariants}
+  initial="hidden"
+  whileInView="show"
+  viewport={{ once: true }}
+  className="mt-20 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+>
+  {stats.map((item, index) => (
+    <motion.div
+      key={index}
+      variants={itemVariants}
+      whileHover={{
+        y: -5,
+        scale: 1.03,
+      }}
+      className="
+        rounded-3xl
+        border
+        border-border
+        bg-card/50
+        p-8
+        text-center
+        backdrop-blur-sm
+        hover:border-violet-500/30
+        hover:shadow-[0_20px_50px_rgba(139,92,246,0.15)]
+      "
+    >
+      <h3 className="mb-2 text-4xl font-bold">
+        <span className="bg-gradient-to-r from-violet-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">
+          {item.number}
+        </span>
+      </h3>
 
-              <p className="text-muted-foreground">
-                {item.label}
-              </p>
-            </div>
-          ))}
-        </div>
+      <p className="text-muted-foreground">
+        {item.label}
+      </p>
+    </motion.div>
+  ))}
+</motion.div>
       </div>
     </section>
   )

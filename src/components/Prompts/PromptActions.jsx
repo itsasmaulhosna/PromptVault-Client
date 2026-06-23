@@ -1,6 +1,7 @@
 import { Bookmark, Flag } from "lucide-react"
 import ReportPromptModal from "./ReportPromptModal"
 import { useState } from "react"
+import toast from "react-hot-toast"
 
 export default function PromptActions({
   bookmarks,

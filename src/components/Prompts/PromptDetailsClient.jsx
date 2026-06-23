@@ -14,12 +14,14 @@ import PromptRating from '@/components/Prompts/PromptRating'
 import CreatorInfo from '@/components/CreatorInfo'
 import PromptActions from '@/components/Prompts/PromptActions'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function PromptDetailsClient({
   prompt,
 }) {
-  const { data: session } = useSession()
   
+  const { data: session } = useSession()
+const router = useRouter()
   const [bookmarks, setBookmarks] =
     useState(prompt.bookmarks || 0)
 const [rating, setRating] =
@@ -137,7 +139,23 @@ const fetchReviews = async () => {
 useEffect(() => {
   fetchReviews()
 }, [])
-const isPremiumUser = false
+const [isPremiumUser,
+setIsPremiumUser] =
+useState(false)
+
+useEffect(() => {
+  if (!session?.user?.email) return
+
+  fetch(
+    `http://localhost:8080/api/users/premium/${session.user.email}`
+  )
+    .then(res => res.json())
+    .then(data =>
+      setIsPremiumUser(
+        data.isPremium
+      )
+    )
+}, [session])
 
   return (
     <section className="min-h-screen bg-[#050816] py-10">
@@ -235,12 +253,24 @@ const isPremiumUser = false
       with a one-time upgrade.
     </p>
 
-    <Link
+    {/* <Link
   href="/upgrade"
   className="inline-flex rounded-xl bg-cyan-500 px-8 py-4 font-semibold text-black"
 >
   Subscribe to Premium ($5)
+</Link> */}
+
+<Link
+href={`/upgrade?redirect=${encodeURIComponent(
+    `/prompts/${prompt._id}`
+  )}`}
+
+  className="inline-flex rounded-xl bg-cyan-500 px-8 py-4 font-semibold text-black"
+>
+  Subscribe to Premium ($5)
 </Link>
+
+
 
   </div>
 
@@ -318,10 +348,19 @@ const isPremiumUser = false
                     {copies}
                   </span>
                 </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400">
+                    BookMarks
+                  </span>
 
-                <span className="font-semibold text-white">
+                  <span className="font-semibold text-white">
+                    {bookmarks}
+                  </span>
+                </div>
+
+                {/* <span className="font-semibold text-white">
   {bookmarks}
-</span>
+</span> */}
 
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">

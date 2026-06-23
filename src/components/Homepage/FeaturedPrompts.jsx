@@ -1,6 +1,8 @@
+
 'use client'
 
 import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 import PromptCard from '@/components/Prompts/PromptCard'
 
 export default function FeaturedPrompts() {
@@ -16,13 +18,11 @@ export default function FeaturedPrompts() {
 
         const data = await res.json()
 
-        console.log('API Response:', data)
+        console.log('Featured API:', data)
 
-        // যদি API { success, data } return করে
-        setPrompts(data.data || [])
-
-        // যদি API সরাসরি array return করে তাহলে এটা use করো
-        // setPrompts(data)
+        if (data.success) {
+          setPrompts(data.data)
+        }
       } catch (error) {
         console.error(
           'Featured Prompt Error:',
@@ -36,51 +36,110 @@ export default function FeaturedPrompts() {
     fetchFeaturedPrompts()
   }, [])
 
-  useEffect(() => {
-    console.log(
-      'Prompts State:',
-      prompts
-    )
-  }, [prompts])
-
   return (
     <section className="py-20">
       <div className="container mx-auto px-4">
-
-        <div className="mb-12 text-center">
-          <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-2 text-sm text-violet-400">
+        {/* Header */}
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 30,
+          }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
+          viewport={{
+            once: true,
+          }}
+          transition={{
+            duration: 0.6,
+          }}
+          className="mb-12 text-center"
+        >
+          <motion.span
+            whileHover={{
+              scale: 1.05,
+            }}
+            className="rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-2 text-sm text-violet-400"
+          >
             Featured Collection
-          </span>
+          </motion.span>
 
           <h2 className="mt-5 text-4xl font-bold text-white md:text-5xl">
             Featured Prompts
           </h2>
 
           <p className="mx-auto mt-4 max-w-2xl text-gray-400">
-            Discover hand-picked AI prompts
-            loved by creators, marketers,
-            developers, and productivity
-            enthusiasts.
+            Discover hand-picked AI prompts loved by
+            creators, marketers, developers, and
+            productivity enthusiasts.
           </p>
-        </div>
+        </motion.div>
 
+        {/* Loading */}
         {loading ? (
-          <div className="text-center text-gray-400">
+          <motion.div
+            animate={{
+              opacity: [0.4, 1, 0.4],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+            }}
+            className="text-center text-gray-400"
+          >
             Loading featured prompts...
-          </div>
+          </motion.div>
         ) : prompts.length === 0 ? (
           <div className="text-center text-red-400">
             No featured prompts found.
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {prompts.map(prompt => (
-              <PromptCard
-                key={prompt._id}
-                prompt={prompt}
-              />
-            ))}
-          </div>
+          <>
+            
+            
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{
+                once: true,
+              }}
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: {
+                    staggerChildren: 0.1,
+                  },
+                },
+              }}
+              className="grid gap-6 md:grid-cols-2 xl:grid-cols-3"
+            >
+              {prompts.map(prompt => (
+                <motion.div
+                  key={prompt._id}
+                  variants={{
+                    hidden: {
+                      opacity: 0,
+                      y: 30,
+                    },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                    },
+                  }}
+                  whileHover={{
+                    y: -6,
+                  }}
+                >
+                  <PromptCard
+                    prompt={prompt}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          </>
         )}
       </div>
     </section>

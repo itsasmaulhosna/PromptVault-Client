@@ -9,9 +9,10 @@ export default function PromptsPage() {
   const [loading, setLoading] = useState(true)
 
   const [filters, setFilters] = useState({
-    aiTool: 'All',
-    category: 'All',
-  })
+  aiTool: 'All',
+  category: 'All',
+  difficulty: 'All',
+})
 
   const [sortBy, setSortBy] = useState('latest')
 
@@ -25,32 +26,49 @@ const search =
   }, [filters])
 
   const fetchPrompts = async () => {
-    try {
-      setLoading(true)
+  try {
+    setLoading(true)
 
-      const query = new URLSearchParams()
+    const query = new URLSearchParams()
 
-      if (filters.aiTool !== 'All') {
-        query.append('aiTool', filters.aiTool)
-      }
-
-      if (filters.category !== 'All') {
-        query.append('category', filters.category)
-      }
-
-      const res = await fetch(
-        `http://localhost:8080/api/prompts?${query}`
+    if (filters.aiTool !== 'All') {
+      query.append(
+        'aiTool',
+        filters.aiTool
       )
-
-      const data = await res.json()
-
-      setPrompts(data.data || data)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
     }
+
+    if (filters.category !== 'All') {
+      query.append(
+        'category',
+        filters.category
+      )
+    }
+
+    if (
+      filters.difficulty !== 'All'
+    ) {
+      query.append(
+        'difficulty',
+        filters.difficulty
+      )
+    }
+
+    const res = await fetch(
+      `http://localhost:8080/api/marketplace-prompts?${query.toString()}`
+    )
+
+    const data = await res.json()
+
+console.log(data)
+
+setPrompts(data.data || [])
+  } catch (err) {
+    console.error(err)
+  } finally {
+    setLoading(false)
   }
+}
 
   const sortedPrompts = useMemo(() => {
     const sorted = [...prompts]

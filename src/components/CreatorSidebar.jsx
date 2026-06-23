@@ -11,10 +11,10 @@ import {
   FaFileAlt,
   FaChartBar,
 } from 'react-icons/fa'
-
+import { usePathname } from 'next/navigation'
 export default function CreatorSidebar() {
   const { data: session } = useSession()
-
+const pathname = usePathname()
   const handleLogout = async () => {
     await signOut()
   }
@@ -103,32 +103,40 @@ export default function CreatorSidebar() {
             Creator Panel
           </p>
 
-          {menuItems.map(({ key, label, icon: Icon, href }) => (
-            <Link
-              key={key}
-              href={href}
-              className="
-                flex
-                items-center
-                gap-3
-                rounded-xl
-                px-3
-                py-3
-                text-sm
-                font-medium
-                text-muted-foreground
-                transition-all
-                hover:bg-accent
-                hover:text-foreground
-              "
-            >
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted">
-                <Icon size={16} />
-              </span>
+          {menuItems.map(({ key, label, icon: Icon, href }) => {
+  const isActive = pathname === href
 
-              {label}
-            </Link>
-          ))}
+  return (
+    <Link
+      key={key}
+      href={href}
+      className={`
+        flex items-center gap-3 rounded-xl px-3 py-3
+        text-sm font-medium transition-all
+        ${
+          isActive
+            ? 'bg-blue-400 text-white shadow-lg shadow-violet-500/20'
+            : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+        }
+      `}
+    >
+      <span
+        className={`
+          flex h-9 w-9 items-center justify-center rounded-lg
+          ${
+            isActive
+              ? 'bg-white/20'
+              : 'bg-muted'
+          }
+        `}
+      >
+        <Icon size={16} />
+      </span>
+
+      {label}
+    </Link>
+  )
+})}
         </nav>
 
         {/* Footer */}

@@ -1,6 +1,8 @@
+
 'use client'
 
 import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 
 const faqs = [
@@ -31,6 +33,30 @@ const faqs = [
   },
 ]
 
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.12,
+    },
+  },
+}
+
+const itemVariants = {
+  hidden: {
+    opacity: 0,
+    y: 30,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: 'easeOut',
+    },
+  },
+}
+
 export default function FaqSection() {
   const [openIndex, setOpenIndex] = useState(3)
 
@@ -43,15 +69,42 @@ export default function FaqSection() {
       {/* Background */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background via-background to-muted/20" />
 
-      {/* Glow Effects */}
-      <div className="absolute left-0 top-0 h-80 w-80 rounded-full bg-violet-500/10 blur-3xl" />
-      <div className="absolute right-0 bottom-0 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl" />
+      {/* Animated Glow */}
+      <motion.div
+        animate={{
+          scale: [1, 1.15, 1],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+        className="absolute left-0 top-0 h-80 w-80 rounded-full bg-violet-500/10 blur-3xl"
+      />
+
+      <motion.div
+        animate={{
+          scale: [1.15, 1, 1.15],
+        }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+        className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl"
+      />
 
       <div className="container mx-auto max-w-5xl px-4">
         {/* Header */}
-        <div className="mb-16 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="mb-16 text-center"
+        >
           <span
-            className="
+            className={`
               mb-5
               inline-flex
               rounded-full
@@ -67,7 +120,7 @@ export default function FaqSection() {
               uppercase
               tracking-wider
               text-violet-500
-            "
+            `}
           >
             FAQ
           </span>
@@ -82,18 +135,28 @@ export default function FaqSection() {
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
             Everything you need to know about using PromptVault.
           </p>
-        </div>
+        </motion.div>
 
         {/* FAQ List */}
-        <div className="rounded-3xl border border-border bg-card/30 backdrop-blur-sm">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+          className="overflow-hidden rounded-3xl border border-border bg-card/30 backdrop-blur-sm"
+        >
           {faqs.map((faq, index) => (
-            <div
+            <motion.div
               key={index}
+              variants={itemVariants}
+              whileHover={{
+                x: 4,
+              }}
               className="border-b border-border last:border-0"
             >
               <button
                 onClick={() => toggleFaq(index)}
-                className="
+                className={`
                   flex
                   w-full
                   items-center
@@ -104,34 +167,56 @@ export default function FaqSection() {
                   transition-colors
                   hover:text-violet-500
                   md:px-8
-                "
+                `}
               >
                 <span className="text-lg font-semibold">
                   {faq.question}
                 </span>
 
-                <ChevronDown
-                  className={`h-5 w-5 shrink-0 transition-transform duration-300 ${
-                    openIndex === index ? 'rotate-180' : ''
-                  }`}
-                />
+                <motion.div
+                  animate={{
+                    rotate: openIndex === index ? 180 : 0,
+                  }}
+                  transition={{
+                    duration: 0.3,
+                  }}
+                >
+                  <ChevronDown className="h-5 w-5 shrink-0" />
+                </motion.div>
               </button>
 
-              <div
-                className={`overflow-hidden transition-all duration-300 ${
-                  openIndex === index
-                    ? 'max-h-96 opacity-100'
-                    : 'max-h-0 opacity-0'
-                }`}
-              >
-                <div className="px-6 pb-6 text-base leading-8 text-muted-foreground md:px-8">
-                  {faq.answer}
-                </div>
-              </div>
-            </div>
+              <AnimatePresence initial={false}>
+                {openIndex === index && (
+                  <motion.div
+                    initial={{
+                      height: 0,
+                      opacity: 0,
+                    }}
+                    animate={{
+                      height: 'auto',
+                      opacity: 1,
+                    }}
+                    exit={{
+                      height: 0,
+                      opacity: 0,
+                    }}
+                    transition={{
+                      duration: 0.35,
+                      ease: 'easeInOut',
+                    }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-6 pb-6 text-base leading-8 text-muted-foreground md:px-8">
+                      {faq.answer}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   )
 }
+

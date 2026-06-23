@@ -1,5 +1,5 @@
 'use client'
-
+import { useSession } from '@/lib/auth-client'
 import { useEffect, useState } from 'react'
 import {
   FaEye,
@@ -12,10 +12,30 @@ import Link from 'next/link'
 export default function AllPromptsPage() {
   const [prompts, setPrompts] = useState([])
   const [loading, setLoading] = useState(true)
-
+const { data: session } = useSession()
   useEffect(() => {
-    fetchPrompts()
-  }, [])
+  const fetchPrompts = async () => {
+    if (!session?.user?.email) return
+
+    try {
+      const res = await fetch(
+        'http://localhost:8080/api/prompts'
+      )
+
+      const data = await res.json()
+
+      console.log(data)
+
+      setPrompts(data.data || [])
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  fetchPrompts()
+}, [session])
 
   const fetchPrompts = async () => {
     try {
@@ -27,9 +47,10 @@ export default function AllPromptsPage() {
 
       const data = await res.json()
 
-      console.log(data)
+console.log(data)
 
-      setPrompts(data)
+setPrompts(data.data || [])
+      
     } catch (error) {
       console.error(error)
     } finally {
@@ -96,6 +117,7 @@ const handleDelete = async (id) => {
 
   fetchPrompts()
 }
+console.log('PROMPTS =>', prompts)
 
   return (
     <div className="p-6">

@@ -22,9 +22,15 @@ export default function PromptFilters({
     'Design',
   ]
 
+  const difficulties = [
+    'All',
+    'Beginner',
+    'Intermediate',
+    'Advanced',
+  ]
+
   return (
     <div className="sticky top-24 rounded-3xl border border-white/10 bg-[#0B1023] p-6">
-
       <div className="mb-8 flex items-center justify-between">
         <h3 className="text-xl font-semibold text-white">
           Filters
@@ -35,6 +41,7 @@ export default function PromptFilters({
             setFilters({
               aiTool: 'All',
               category: 'All',
+              difficulty: 'All',
             })
           }
           className="text-sm text-violet-400"
@@ -43,9 +50,10 @@ export default function PromptFilters({
         </button>
       </div>
 
+      {/* AI Tool */}
       <div className="mb-8">
-        <h4 className="mb-4 text-white font-medium">
-          AI ENGINE
+        <h4 className="mb-4 font-medium text-white">
+          AI TOOL
         </h4>
 
         <div className="space-y-2">
@@ -70,8 +78,9 @@ export default function PromptFilters({
         </div>
       </div>
 
-      <div>
-        <h4 className="mb-4 text-white font-medium">
+      {/* Category */}
+      <div className="mb-8">
+        <h4 className="mb-4 font-medium text-white">
           CATEGORY
         </h4>
 
@@ -92,6 +101,34 @@ export default function PromptFilters({
               }`}
             >
               {category}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Difficulty Level */}
+      <div>
+        <h4 className="mb-4 font-medium text-white">
+          DIFFICULTY LEVEL
+        </h4>
+
+        <div className="space-y-2">
+          {difficulties.map((level) => (
+            <button
+              key={level}
+              onClick={() =>
+                setFilters((prev) => ({
+                  ...prev,
+                  difficulty: level,
+                }))
+              }
+              className={`w-full rounded-xl p-3 text-left ${
+                filters.difficulty === level
+                  ? 'bg-violet-600 text-white'
+                  : 'text-gray-400 hover:bg-white/5'
+              }`}
+            >
+              {level}
             </button>
           ))}
         </div>

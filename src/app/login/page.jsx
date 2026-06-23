@@ -26,24 +26,77 @@ export default function LoginPage() {
     })
   }
 
-  const onSubmit = async data => {
-    const { data: signInData, error } =
-      await authClient.signIn.email({
-        email: data.email,
-        password: data.password,
-      })
+  
+const onSubmit = async data => {
+  try {
+    // Temporary Hardcoded Admin Login
+    if (
+      data.email === 'admin@gmail.com' &&
+      data.password === 'admin123'
+    ) {
+      toast.success(
+        'Admin Login Successful 🎉'
+      )
 
-    console.log('signInData:', signInData)
-    console.log('error:', error)
-
-    if (error) {
-      toast.error(error.message || 'Login failed')
+      router.push('/dashboard/admin/all-prompts')
       return
     }
 
-    toast.success('Login successful 🎉')
-    router.push('/')
+    const {
+      data: signInData,
+      error,
+    } = await authClient.signIn.email({
+      email: data.email,
+      password: data.password,
+    })
+
+    console.log(
+      'signInData:',
+      signInData
+    )
+
+    console.log('error:', error)
+
+    if (error) {
+      toast.error(
+        error.message ||
+          'Login failed'
+      )
+      return
+    }
+
+    toast.success(
+      'Login successful 🎉'
+    )
+
+    const role =
+      signInData?.user?.role
+
+    if (role === 'admin') {
+      router.push(
+        '/dashboard/admin'
+      )
+    } else if (
+      role === 'creator'
+    ) {
+      router.push(
+        '/dashboard/creator'
+      )
+    } else {
+      router.push(
+        '/dashboard/user'
+      )
+    }
+  } catch (err) {
+    console.error(err)
+
+    toast.error(
+      'Something went wrong'
+    )
   }
+}
+
+
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#020817] transition-colors duration-300">

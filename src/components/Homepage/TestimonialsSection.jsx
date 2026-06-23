@@ -1,5 +1,7 @@
+
 'use client'
 
+import { motion } from 'framer-motion'
 import { Quote, Star } from 'lucide-react'
 
 const testimonials = [
@@ -53,6 +55,30 @@ const testimonials = [
   },
 ]
 
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+}
+
+const cardVariants = {
+  hidden: {
+    opacity: 0,
+    y: 40,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: 'easeOut',
+    },
+  },
+}
+
 export default function TestimonialsSection() {
   return (
     <section className="relative overflow-hidden py-24 lg:py-32">
@@ -60,14 +86,41 @@ export default function TestimonialsSection() {
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background via-background to-muted/20" />
 
       {/* Glow */}
-      <div className="absolute left-0 top-0 h-80 w-80 rounded-full bg-violet-500/10 blur-3xl" />
-      <div className="absolute right-0 bottom-0 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl" />
+      <motion.div
+        animate={{
+          scale: [1, 1.15, 1],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+        className="absolute left-0 top-0 h-80 w-80 rounded-full bg-violet-500/10 blur-3xl"
+      />
+
+      <motion.div
+        animate={{
+          scale: [1.1, 1, 1.1],
+        }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+        className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl"
+      />
 
       <div className="container mx-auto px-4">
         {/* Header */}
-        <div className="mx-auto mb-16 max-w-3xl text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="mx-auto mb-16 max-w-3xl text-center"
+        >
           <span
-            className="
+            className={`
               mb-5
               inline-flex
               rounded-full
@@ -83,7 +136,7 @@ export default function TestimonialsSection() {
               uppercase
               tracking-wider
               text-violet-500
-            "
+            `}
           >
             Loved By The Community
           </span>
@@ -99,14 +152,30 @@ export default function TestimonialsSection() {
             Thousands of creators and teams rely on PromptVault
             every day.
           </p>
-        </div>
+        </motion.div>
 
         {/* Testimonials Grid */}
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.15 }}
+          className="grid gap-6 md:grid-cols-2 xl:grid-cols-3"
+        >
           {testimonials.map((item, index) => (
-            <div
+            <motion.div
               key={index}
-              className="
+              variants={cardVariants}
+              whileHover={{
+                y: -10,
+                scale: 1.02,
+              }}
+              transition={{
+                type: 'spring',
+                stiffness: 300,
+                damping: 20,
+              }}
+              className={`
                 group
                 relative
                 overflow-hidden
@@ -115,12 +184,8 @@ export default function TestimonialsSection() {
                 border-border
                 bg-card
                 p-8
-                transition-all
-                duration-300
-                hover:-translate-y-2
-                hover:border-violet-500/30
-                hover:shadow-[0_20px_50px_rgba(139,92,246,0.15)]
-              "
+                shadow-sm
+              `}
             >
               {/* Hover Glow */}
               <div className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
@@ -128,11 +193,22 @@ export default function TestimonialsSection() {
               </div>
 
               <div className="relative">
-                {/* Quote Icon */}
-                <Quote
-                  size={34}
-                  className="mb-6 text-violet-500"
-                />
+                {/* Quote */}
+                <motion.div
+                  animate={{
+                    y: [0, -6, 0],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  }}
+                >
+                  <Quote
+                    size={34}
+                    className="mb-6 text-violet-500"
+                  />
+                </motion.div>
 
                 {/* Review */}
                 <p className="mb-6 min-h-[90px] text-lg leading-relaxed text-foreground">
@@ -142,15 +218,24 @@ export default function TestimonialsSection() {
                 {/* Rating */}
                 <div className="mb-6 flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (
-                    <Star
+                    <motion.div
                       key={i}
-                      size={18}
-                      className={
-                        i < item.rating
-                          ? 'fill-yellow-400 text-yellow-400'
-                          : 'text-muted-foreground'
-                      }
-                    />
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      transition={{
+                        delay: i * 0.05,
+                        duration: 0.25,
+                      }}
+                    >
+                      <Star
+                        size={18}
+                        className={
+                          i < item.rating
+                            ? 'fill-yellow-400 text-yellow-400'
+                            : 'text-muted-foreground'
+                        }
+                      />
+                    </motion.div>
                   ))}
 
                   <span className="ml-2 text-lg text-muted-foreground">
@@ -163,8 +248,15 @@ export default function TestimonialsSection() {
 
                 {/* User */}
                 <div className="flex items-center gap-4">
-                  <div
-                    className="
+                  <motion.div
+                    whileHover={{
+                      rotate: 360,
+                      scale: 1.1,
+                    }}
+                    transition={{
+                      duration: 0.6,
+                    }}
+                    className={`
                       flex
                       h-14
                       w-14
@@ -178,10 +270,10 @@ export default function TestimonialsSection() {
                       to-blue-500/20
                       font-bold
                       text-violet-500
-                    "
+                    `}
                   >
                     {item.avatar}
-                  </div>
+                  </motion.div>
 
                   <div>
                     <h4 className="font-semibold text-foreground">
@@ -194,10 +286,11 @@ export default function TestimonialsSection() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   )
 }
+

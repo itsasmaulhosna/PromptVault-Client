@@ -24,7 +24,7 @@ export default function Navbar() {
   const user = session?.user
   const dashboardLink =
   user?.role === 'admin'
-    ? '/dashboard/admin'
+    ? '/dashboard/admin/all-prompts'
     : user?.role === 'creator'
     ? '/dashboard/creator'
     : '/dashboard/user/profile'

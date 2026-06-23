@@ -12,34 +12,29 @@ import {
 
 export default function ProfilePage() {
   const { data: session } = useSession()
-
+const [isPremium, setIsPremium] =
+  useState(false)
   const [promptCount, setPromptCount] = useState(0)
 
   useEffect(() => {
-    const fetchPromptCount = async () => {
-      if (!session?.user?.email) return
+  const checkPremium = async () => {
+    if (!session?.user?.email) return
 
-      try {
-        const res = await fetch(
-          `http://localhost:8080/api/prompts/user/${session.user.email}`
-        )
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/users/premium/${session.user.email}`
+      )
 
-        const data = await res.json()
+      const data = await res.json()
 
-        const approvedCount =
-          data?.data?.filter(
-            item => item.status === 'approved'
-          ).length || 0
-
-        setPromptCount(approvedCount)
-      } catch (error) {
-        console.error(error)
-      }
+      setIsPremium(data.isPremium)
+    } catch (error) {
+      console.log(error)
     }
+  }
 
-    fetchPromptCount()
-  }, [session])
-
+  checkPremium()
+}, [session])
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -86,9 +81,15 @@ export default function ProfilePage() {
                   'USER'}
               </span>
 
-              <span className="rounded-full bg-amber-500/20 px-4 py-1 text-sm font-semibold text-amber-500">
-                PLAN: FREE
-              </span>
+              <span
+  className={`rounded-full px-4 py-1 text-sm font-semibold ${
+    isPremium
+      ? 'bg-emerald-500/20 text-emerald-500'
+      : 'bg-amber-500/20 text-amber-500'
+  }`}
+>
+  PLAN: {isPremium ? 'LIFETIME PRO' : 'FREE'}
+</span>
             </div>
           </div>
         </div>
@@ -132,33 +133,68 @@ export default function ProfilePage() {
         </div>
 
         {/* Upgrade Box */}
-        <div className="mt-8 rounded-3xl bg-gradient-to-r from-violet-600/20 to-cyan-500/20 p-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <div className="mb-3 flex items-center gap-3">
-                <FaCrown className="text-yellow-500" />
+        {isPremium ? (
+  <div className="mt-8 rounded-3xl border border-emerald-500/20 bg-emerald-500/10 p-8">
 
-                <h3 className="text-2xl font-bold">
-                  Upgrade to Pro Lifetime
-                </h3>
-              </div>
+    <div className="flex items-center gap-4">
 
-              <p className="max-w-2xl text-muted-foreground">
-                Unlock access to premium prompt
-                templates, advanced AI workflows,
-                private collections and exclusive
-                creator resources.
-              </p>
-            </div>
+      <FaCheckCircle
+        size={28}
+        className="text-emerald-500"
+      />
 
-            <Link
-  href="/upgrade"
-  className="rounded-2xl bg-cyan-500 px-8 py-4 font-semibold text-black transition hover:scale-105"
->
-  Upgrade Now ($5)
-</Link>
-          </div>
+      <div>
+        <h3 className="text-2xl font-bold text-emerald-400">
+          Lifetime Premium Active
+        </h3>
+
+        <p className="mt-2 text-gray-400">
+          You have lifetime access to all premium prompts,
+          private collections, reviews, unlimited copies
+          and future premium releases.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+) : (
+  <div className="mt-8 rounded-3xl bg-gradient-to-r from-violet-600/20 to-cyan-500/20 p-8">
+
+    <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+
+      <div>
+
+        <div className="mb-3 flex items-center gap-3">
+          <FaCrown className="text-yellow-500" />
+
+          <h3 className="text-2xl font-bold">
+            Upgrade to Pro Lifetime
+          </h3>
         </div>
+
+        <p className="max-w-2xl text-muted-foreground">
+          Unlock access to premium prompt templates,
+          advanced AI workflows, private collections
+          and exclusive creator resources.
+        </p>
+
+      </div>
+
+      <Link
+        href={`/upgrade?redirect=${encodeURIComponent(
+    '/dashboard/user/profile'
+  )}`}
+
+        className="rounded-2xl bg-cyan-500 px-8 py-4 font-semibold text-black"
+      >
+        Upgrade Now ($5)
+      </Link>
+
+    </div>
+
+  </div>
+)}
       </div>
     </div>
   )
