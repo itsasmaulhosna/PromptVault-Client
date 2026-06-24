@@ -3,6 +3,13 @@ import { auth } from '@/lib/auth';
 
 export async function proxy(request) {
   try {
+    const pathname = request.nextUrl.pathname;
+
+    // Skip all admin routes
+    if (pathname.startsWith('/dashboard/admin')) {
+      return NextResponse.next();
+    }
+
     const session = await auth.api.getSession({
       headers: request.headers,
     });
@@ -13,10 +20,10 @@ export async function proxy(request) {
 
     return NextResponse.next();
   } catch (error) {
-    console.error('Proxy Error:', error);
-
     return NextResponse.redirect(new URL('/login', request.url));
   }
 }
 
-export const config = { matcher: ['/dashboard/:path*', '/prompts/:id'] };
+export const config = {
+  matcher: ['/dashboard/:path*', '/prompts/:id'],
+};

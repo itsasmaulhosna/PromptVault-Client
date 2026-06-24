@@ -1,24 +1,53 @@
 
 'use client'
+import { useSession } from '@/lib/auth-client'
 
 import { useState } from 'react'
 import { Diamond, CreditCard } from 'lucide-react'
-
+import { useRouter, useSearchParams } from 'next/navigation'
+import toast from 'react-hot-toast'
 export default function UpgradePage() {
-  const [showSaveCard, setShowSaveCard] =
-    useState(false)
+  const [showSaveCard, setShowSaveCard] =useState(false)
+const router = useRouter()
+const searchParams = useSearchParams()
+const { data: session } = useSession()
 
+const redirectTo =
+  searchParams.get('redirect') ||
+  '/dashboard/user/profile'
   const [processing, setProcessing] =
     useState(false)
 
-  const handlePayment = () => {
-    setProcessing(true)
+  const handlePayment = async () => {
+  setProcessing(true)
 
-    setTimeout(() => {
-      setProcessing(false)
-    }, 2000)
+  try {
+    await fetch(
+  'http://localhost:8080/api/users/upgrade',
+  {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email: session?.user?.email,
+    }),
   }
+)
 
+    toast.success(
+      'Premium activated successfully'
+    )
+
+    router.push(redirectTo)
+  } catch (error) {
+    console.error(error)
+
+    toast.error('Payment failed')
+  } finally {
+    setProcessing(false)
+  }
+}
   return (
     <section className="min-h-screen bg-[#050816] py-10 md:py-16">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
@@ -133,7 +162,7 @@ export default function UpgradePage() {
                 </div>
               ) : (
                 <button
-                  className="
+                  className={`
                     flex
                     w-full
                     items-center
@@ -147,7 +176,7 @@ export default function UpgradePage() {
                     py-3
                     text-sm
                     text-green-300
-                  "
+                  `}
                 >
                   <span className="h-3 w-3 rounded-full bg-green-500" />
 
@@ -160,7 +189,7 @@ export default function UpgradePage() {
             <button
               onClick={handlePayment}
               disabled={processing}
-              className="
+              className={`
                 mt-8
                 h-12
                 w-full
@@ -178,7 +207,7 @@ export default function UpgradePage() {
                 disabled:opacity-70
                 md:h-14
                 md:text-lg
-              "
+              `}
             >
               {processing
                 ? 'Processing transaction...'
@@ -200,7 +229,7 @@ export default function UpgradePage() {
 
               <button
                 onClick={handlePayment}
-                className="
+                className={`
                   w-full
                   rounded-xl
                   bg-cyan-500
@@ -211,7 +240,7 @@ export default function UpgradePage() {
                   transition
                   hover:bg-cyan-400
                   md:text-base
-                "
+                `}
               >
                 Simulate $5 Test Checkout
               </button>

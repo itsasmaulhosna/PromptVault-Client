@@ -1,5 +1,5 @@
 'use client'
-import { useSession } from '@/lib/auth-client'
+// import { useSession } from '@/lib/auth-client'
 import { useEffect, useState } from 'react'
 import {
   FaEye,
@@ -12,51 +12,76 @@ import Link from 'next/link'
 export default function AllPromptsPage() {
   const [prompts, setPrompts] = useState([])
   const [loading, setLoading] = useState(true)
-const { data: session } = useSession()
-  useEffect(() => {
-  const fetchPrompts = async () => {
-    if (!session?.user?.email) return
+// const { data: session } = useSession()
+//   useEffect(() => {
+//   const fetchPrompts = async () => {
+//     if (!session?.user?.email) return
 
-    try {
-      const res = await fetch(
-        'http://localhost:8080/api/prompts'
-      )
+//     try {
+//       const res = await fetch(
+//         'http://localhost:8080/api/prompts'
+//       )
 
-      const data = await res.json()
+//       const data = await res.json()
 
-      console.log(data)
+//       console.log(data)
 
-      setPrompts(data.data || [])
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setLoading(false)
-    }
+//       setPrompts(data.data || [])
+//     } catch (error) {
+//       console.error(error)
+//     } finally {
+//       setLoading(false)
+//     }
+//   }
+
+//   fetchPrompts()
+// }, [session])
+const fetchPrompts = async () => {
+  console.log('FETCH PROMPTS RUNNING')
+
+  try {
+    setLoading(true)
+
+    const res = await fetch(
+      'http://localhost:8080/api/prompts'
+    )
+
+    const data = await res.json()
+
+    console.log('DATA', data)
+
+    setPrompts(data.data || [])
+  } catch (error) {
+    console.error(error)
+  } finally {
+    setLoading(false)
   }
+}
 
+useEffect(() => {
   fetchPrompts()
-}, [session])
+}, [])
 
-  const fetchPrompts = async () => {
-    try {
-      setLoading(true)
+//   const fetchPrompts = async () => {
+//     try {
+//       setLoading(true)
 
-      const res = await fetch(
-        'http://localhost:8080/api/prompts'
-      )
+//       const res = await fetch(
+//         'http://localhost:8080/api/prompts'
+//       )
 
-      const data = await res.json()
+//       const data = await res.json()
 
-console.log(data)
+// console.log(data)
 
-setPrompts(data.data || [])
+// setPrompts(data.data || [])
       
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setLoading(false)
-    }
-  }
+//     } catch (error) {
+//       console.error(error)
+//     } finally {
+//       setLoading(false)
+//     }
+//   }
   const handleApprove = async (id) => {
   await fetch(
     `http://localhost:8080/api/prompts/${id}/approve`,
@@ -132,198 +157,239 @@ console.log('PROMPTS =>', prompts)
       </div>
 
       {loading ? (
-        <div className="text-center py-10">
-          Loading prompts...
-        </div>
-      ) : (
-        <div className="overflow-x-auto rounded-xl border border-border">
-          <table className="w-full">
-            <thead className="bg-muted">
-              <tr>
-                <th className="p-4 text-left">
-                  Title
-                </th>
-
-                <th className="p-4 text-left">
-                  Category
-                </th>
-
-                <th className="p-4 text-left">
-                  AI Tool
-                </th>
-
-                <th className="p-4 text-left">
-                  Visibility
-                </th>
-                <th className="p-4 text-left">
-  Access
-</th>
-
-                <th className="p-4 text-left">
-                  Status
-                </th>
-
-                <th className="p-4 text-left">
-                  Copies
-                </th>
-
-                <th className="p-4 text-left">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {prompts.length > 0 ? (
-                prompts.map((prompt) => (
-                  <tr
-                    key={prompt._id}
-                    className="border-t border-border"
-                  >
-                    <td className="p-4">
-                      <div className="font-medium">
-                        {prompt.title}
-                      </div>
-                    </td>
-
-                    <td className="p-4">
-                      {prompt.category}
-                    </td>
-
-                    <td className="p-4">
-                      {prompt.aiTool}
-                    </td>
-
-                    <td className="p-4">
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs ${
-                          prompt.visibility ===
-                          'public'
-                            ? 'bg-green-500/10 text-green-500'
-                            : 'bg-yellow-500/10 text-yellow-500'
-                        }`}
-                      >
-                        {prompt.visibility}
-                      </span>
-                    </td>
-                    <td className="p-4">
-  <span
-    className={`rounded-full px-3 py-1 text-xs ${
-      prompt.accessType === 'premium'
-        ? 'bg-yellow-500/10 text-yellow-500'
-        : 'bg-blue-500/10 text-blue-500'
-    }`}
-  >
-    {prompt.accessType || 'free'}
-  </span>
-</td>
-
-                    <td className="p-4">
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs ${
-                          prompt.status ===
-                          'approved'
-                            ? 'bg-green-500/10 text-green-500'
-                            : prompt.status ===
-                                'rejected'
-                              ? 'bg-red-500/10 text-red-500'
-                              : 'bg-yellow-500/10 text-yellow-500'
-                        }`}
-                      >
-                        {prompt.status}
-                      </span>
-                    </td>
-
-                    <td className="p-4">
-                      {prompt.copyCount || 0}
-                    </td>
-
-                    <td className="p-4">
-  <div className="flex items-center gap-3">
-
-    {/* View */}
-    <Link
-  href={`/prompts/${prompt._id}`}
-  className="text-blue-300 transition hover:scale-110"
->
-  <FaEye size={18} />
-</Link>
-
-    {/* Approve */}
-    {prompt.status !== 'approved' && (
-  <button
-    onClick={() =>
-      handleApprove(prompt._id)
-    }
-    className="text-green-300 hover:scale-110 transition"
-  >
-    <FaCheckCircle size={18} />
-  </button>
-)}
-
-    {/* Reject */}
-    {prompt.status !== 'rejected' && (
-  <button
-    onClick={() =>
-      handleReject(prompt._id)
-    }
-    className="text-yellow-200 hover:scale-110 transition"
-  >
-    <FaTimesCircle size={18} />
-  </button>
-)}
-
-{/* access */}
-<button
-  onClick={() =>
-    handleAccessType(
-      prompt._id,
-      prompt.accessType === 'premium'
-        ? 'free'
-        : 'premium'
-    )
-  }
-  title={
-    prompt.accessType === 'premium'
-      ? 'Make Free'
-      : 'Make Premium'
-  }
-  className={`hover:scale-110 transition ${
-    prompt.accessType === 'premium'
-      ? 'text-yellow-400'
-      : 'text-gray-400'
-  }`}
->
-  <FaCrown size={18} />
-</button>
-    {/* Delete */}
-    <button
-      onClick={() =>
-        handleDelete(prompt._id)
-      }
-      className="text-red-400 hover:scale-110 transition"
-    >
-      <FaTrash size={18} />
-    </button>
-
+  <div className="py-10 text-center">
+    Loading prompts...
   </div>
-</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan="7"
-                    className="p-8 text-center text-muted-foreground"
-                  >
-                    No prompts found
-                  </td>
-                </tr>
+) : (
+  <>
+    {/* Desktop */}
+<div className="hidden overflow-x-auto rounded-xl border border-border lg:block">
+  <table className="w-full min-w-[1100px]">
+    <thead className="bg-muted">
+      <tr>
+        <th className="p-4 text-left">Title</th>
+        <th className="p-4 text-left">Category</th>
+        <th className="p-4 text-left">AI Tool</th>
+        <th className="p-4 text-left">Visibility</th>
+        <th className="p-4 text-left">Access</th>
+        <th className="p-4 text-left">Status</th>
+        <th className="p-4 text-left">Copies</th>
+        <th className="p-4 text-left">Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {prompts.map((prompt) => (
+        <tr
+          key={prompt._id}
+          className="border-t border-border"
+        >
+          <td className="p-4 font-medium">
+            {prompt.title}
+          </td>
+
+          <td className="p-4">
+            {prompt.category}
+          </td>
+
+          <td className="p-4">
+            {prompt.aiTool}
+          </td>
+
+          <td className="p-4">
+            {prompt.visibility}
+          </td>
+
+          <td className="p-4">
+            {prompt.accessType || 'free'}
+          </td>
+
+          <td className="p-4">
+            {prompt.status}
+          </td>
+
+          <td className="p-4">
+            {prompt.copyCount || 0}
+          </td>
+
+          <td className="p-4">
+            <div className="flex items-center gap-3">
+
+              <Link
+                href={`/prompts/${prompt._id}`}
+                className="text-blue-500"
+              >
+                <FaEye size={18} />
+              </Link>
+
+              {prompt.status !== 'approved' && (
+                <button
+                  onClick={() =>
+                    handleApprove(prompt._id)
+                  }
+                  className="text-green-500"
+                >
+                  <FaCheckCircle size={18} />
+                </button>
               )}
-            </tbody>
-          </table>
+
+              {prompt.status !== 'rejected' && (
+                <button
+                  onClick={() =>
+                    handleReject(prompt._id)
+                  }
+                  className="text-yellow-500"
+                >
+                  <FaTimesCircle size={18} />
+                </button>
+              )}
+
+              <button
+                onClick={() =>
+                  handleAccessType(
+                    prompt._id,
+                    prompt.accessType ===
+                      'premium'
+                      ? 'free'
+                      : 'premium'
+                  )
+                }
+                className="text-yellow-500"
+              >
+                <FaCrown size={18} />
+              </button>
+
+              <button
+                onClick={() =>
+                  handleDelete(prompt._id)
+                }
+                className="text-red-500"
+              >
+                <FaTrash size={18} />
+              </button>
+
+            </div>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+    {/* Mobile */}
+    <div className="space-y-4 lg:hidden">
+      {prompts.map(prompt => (
+        <div
+          key={prompt._id}
+          className="rounded-xl border border-border bg-card p-4"
+        >
+          <h3 className="mb-3 text-lg font-bold">
+            {prompt.title}
+          </h3>
+
+          <div className="space-y-2 text-sm">
+            <p>
+              <strong>Category:</strong>{' '}
+              {prompt.category}
+            </p>
+
+            <p>
+              <strong>AI Tool:</strong>{' '}
+              {prompt.aiTool}
+            </p>
+
+            <p>
+              <strong>Visibility:</strong>{' '}
+              {prompt.visibility}
+            </p>
+
+            <p>
+              <strong>Access:</strong>{' '}
+              {prompt.accessType || 'free'}
+            </p>
+
+            <p>
+              <strong>Status:</strong>{' '}
+              {prompt.status}
+            </p>
+
+            <p>
+              <strong>Copies:</strong>{' '}
+              {prompt.copyCount || 0}
+            </p>
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-4">
+            <Link
+              href={`/prompts/${prompt._id}`}
+              className="text-blue-500"
+            >
+              <FaEye size={18} />
+            </Link>
+
+            {prompt.status !==
+              'approved' && (
+              <button
+                onClick={() =>
+                  handleApprove(
+                    prompt._id
+                  )
+                }
+                className="text-green-500"
+              >
+                <FaCheckCircle
+                  size={18}
+                />
+              </button>
+            )}
+
+            {prompt.status !==
+              'rejected' && (
+              <button
+                onClick={() =>
+                  handleReject(
+                    prompt._id
+                  )
+                }
+                className="text-yellow-500"
+              >
+                <FaTimesCircle
+                  size={18}
+                />
+              </button>
+            )}
+
+            <button
+              onClick={() =>
+                handleAccessType(
+                  prompt._id,
+                  prompt.accessType ===
+                    'premium'
+                    ? 'free'
+                    : 'premium'
+                )
+              }
+              className="text-yellow-500"
+            >
+              <FaCrown size={18} />
+            </button>
+
+            <button
+              onClick={() =>
+                handleDelete(
+                  prompt._id
+                )
+              }
+              className="text-red-500"
+            >
+              <FaTrash size={18} />
+            </button>
+          </div>
         </div>
-      )}
+      ))}
+    </div>
+  </>
+)}
     </div>
   )
 }
