@@ -32,7 +32,7 @@ export default function CustomerReviews() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/reviews')
+    fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/reviews`)
       .then((res) => res.json())
       .then((data) => {
         setReviews(data.data || [])

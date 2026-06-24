@@ -14,7 +14,7 @@ export default function MyReviewsPage() {
     if (!session?.user?.email) return
 
     fetch(
-      `http://localhost:8080/api/reviews/user/${session.user.email}`
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/reviews/user/${session.user.email}`
     )
       .then(res => res.json())
       .then(data => setReviews(data.data || []))

@@ -12,30 +12,7 @@ import Link from 'next/link'
 export default function AllPromptsPage() {
   const [prompts, setPrompts] = useState([])
   const [loading, setLoading] = useState(true)
-// const { data: session } = useSession()
-//   useEffect(() => {
-//   const fetchPrompts = async () => {
-//     if (!session?.user?.email) return
 
-//     try {
-//       const res = await fetch(
-//         'http://localhost:8080/api/prompts'
-//       )
-
-//       const data = await res.json()
-
-//       console.log(data)
-
-//       setPrompts(data.data || [])
-//     } catch (error) {
-//       console.error(error)
-//     } finally {
-//       setLoading(false)
-//     }
-//   }
-
-//   fetchPrompts()
-// }, [session])
 const fetchPrompts = async () => {
   console.log('FETCH PROMPTS RUNNING')
 
@@ -43,7 +20,7 @@ const fetchPrompts = async () => {
     setLoading(true)
 
     const res = await fetch(
-      'http://localhost:8080/api/prompts'
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/prompts`
     )
 
     const data = await res.json()
@@ -62,29 +39,10 @@ useEffect(() => {
   fetchPrompts()
 }, [])
 
-//   const fetchPrompts = async () => {
-//     try {
-//       setLoading(true)
 
-//       const res = await fetch(
-//         'http://localhost:8080/api/prompts'
-//       )
-
-//       const data = await res.json()
-
-// console.log(data)
-
-// setPrompts(data.data || [])
-      
-//     } catch (error) {
-//       console.error(error)
-//     } finally {
-//       setLoading(false)
-//     }
-//   }
   const handleApprove = async (id) => {
   await fetch(
-    `http://localhost:8080/api/prompts/${id}/approve`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/prompts/${id}/approve`,
     {
       method: 'PATCH',
     }
@@ -95,7 +53,7 @@ useEffect(() => {
 
 const handleReject = async (id) => {
   await fetch(
-    `http://localhost:8080/api/prompts/${id}/reject`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/prompts/${id}/reject`,
     {
       method: 'PATCH',
     }
@@ -109,7 +67,7 @@ const handleAccessType = async (
 ) => {
   try {
     await fetch(
-      `http://localhost:8080/api/prompts/${id}/access`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/prompts/${id}/access`,
       {
         method: 'PATCH',
         headers: {
@@ -134,7 +92,7 @@ const handleDelete = async (id) => {
   if (!confirmDelete) return
 
   await fetch(
-    `http://localhost:8080/api/prompts/${id}`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/prompts/${id}`,
     {
       method: 'DELETE',
     }

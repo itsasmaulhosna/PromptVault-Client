@@ -13,7 +13,7 @@ export default function FeaturedPrompts() {
     const fetchFeaturedPrompts = async () => {
       try {
         const res = await fetch(
-          'http://localhost:8080/api/prompts/featured'
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/prompts/featured`
         )
 
         const data = await res.json()

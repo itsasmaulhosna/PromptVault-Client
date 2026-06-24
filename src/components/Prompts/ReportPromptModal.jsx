@@ -38,7 +38,7 @@ export default function ReportPromptModal({
       }
 
       const res = await fetch(
-        'http://localhost:8080/api/reports',
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/reports`,
         {
           method: 'POST',
           headers: {

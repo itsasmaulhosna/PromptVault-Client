@@ -7,7 +7,7 @@ export default async function PromptDetailsPage({
   const { id } = await params
 
   const res = await fetch(
-    `http://localhost:8080/api/prompts/${id}`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/prompts/${id}`,
     {
       cache: 'no-store',
     }

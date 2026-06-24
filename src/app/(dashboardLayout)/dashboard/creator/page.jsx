@@ -26,7 +26,7 @@ export default function CreatorDashboardPage() {
 
   useEffect(() => {
   fetch(
-    'http://localhost:8080/api/creator/analytics'
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/creator/analytics`
   )
     .then(res => res.json())
     .then(data => {

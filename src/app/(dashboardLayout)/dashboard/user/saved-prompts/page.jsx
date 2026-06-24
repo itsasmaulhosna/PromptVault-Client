@@ -15,7 +15,7 @@ export default function SavedPromptsPage() {
   useEffect(() => {
     if (!session?.user?.email) return
 
-    fetch(`http://localhost:8080/api/bookmarks/${session.user.email}`)
+    fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/bookmarks/${session.user.email}`)
       .then(res => res.json())
       .then(data => {
         setPrompts(data.data || [])
@@ -24,10 +24,10 @@ export default function SavedPromptsPage() {
       .catch(() => setLoading(false))
   }, [session])
 
-  // ✅ REMOVE BOOKMARK
+  
   const handleRemove = async (id) => {
     try {
-      const res = await fetch(`http://localhost:8080/api/bookmarks`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/bookmarks`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

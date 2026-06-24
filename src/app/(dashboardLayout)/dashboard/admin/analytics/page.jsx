@@ -31,7 +31,7 @@ export default function AnalyticsPage() {
   const fetchAnalytics = async () => {
     try {
       const res = await fetch(
-        'http://localhost:8080/api/admin/analytics'
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/admin/analytics`
       )
 
       const data = await res.json()

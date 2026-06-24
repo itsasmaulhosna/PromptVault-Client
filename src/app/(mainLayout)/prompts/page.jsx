@@ -1,10 +1,10 @@
 'use client'
-
+import { Suspense } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import PromptCard from '@/components/Prompts/PromptCard'
 import PromptFilters from '@/components/Prompts/PromptFilters'
 import { useSearchParams } from 'next/navigation'
-export default function PromptsPage() {
+function PromptsPageContent() {
   const [prompts, setPrompts] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -55,7 +55,7 @@ const search =
     }
 
     const res = await fetch(
-      `http://localhost:8080/api/marketplace-prompts?${query.toString()}`
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/marketplace-prompts?${query.toString()}`
     )
 
     const data = await res.json()
@@ -183,5 +183,12 @@ setPrompts(data.data || [])
         </div>
       </div>
     </section>
+  )
+}
+export default function PromptsPage() {
+  return (
+    <Suspense fallback={null}>
+      <PromptsPageContent />
+    </Suspense>
   )
 }

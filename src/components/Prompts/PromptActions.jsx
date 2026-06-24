@@ -17,7 +17,7 @@ export default function PromptActions({
 
     if (isBookmarked) {
       const res = await fetch(
-        'http://localhost:8080/api/bookmarks',
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/bookmarks`,
         {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
@@ -35,7 +35,7 @@ export default function PromptActions({
 
     } else {
       const res = await fetch(
-        'http://localhost:8080/api/bookmarks',
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/bookmarks`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

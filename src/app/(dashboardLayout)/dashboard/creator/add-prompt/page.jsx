@@ -92,7 +92,7 @@ const [isUploading, setIsUploading] = useState(false)
 }
 
     const response = await fetch(
-      'http://localhost:8080/api/prompts',
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/prompts`,
       {
         method: 'POST',
         headers: {

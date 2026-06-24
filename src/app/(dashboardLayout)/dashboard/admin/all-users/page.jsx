@@ -21,7 +21,7 @@ export default function AdminUsersPage() {
   const fetchUsers = async () => {
     try {
       const res = await fetch(
-        'http://localhost:8080/api/users'
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users`
       )
 
       const data = await res.json()
@@ -43,7 +43,7 @@ setUsers(data)
   ) => {
     try {
       const res = await fetch(
-        `http://localhost:8080/api/users/${id}/role`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/${id}/role`,
         {
           method: 'PATCH',
           headers: {
@@ -88,7 +88,7 @@ setUsers(data)
 
     try {
       const res = await fetch(
-        `http://localhost:8080/api/users/${id}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/${id}`,
         {
           method: 'DELETE',
         }

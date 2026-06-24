@@ -22,7 +22,7 @@ export default function ReportsPage() {
   const fetchReports = async () => {
     try {
       const res = await fetch(
-        'http://localhost:8080/api/reports'
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/reports`
       )
 
       const data = await res.json()
@@ -54,7 +54,7 @@ export default function ReportsPage() {
   ) => {
     try {
       await fetch(
-        `http://localhost:8080/api/prompts/${report.promptId}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/prompts/${report.promptId}`,
         {
           method: 'DELETE',
         }

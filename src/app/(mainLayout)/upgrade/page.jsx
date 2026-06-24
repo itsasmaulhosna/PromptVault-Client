@@ -2,11 +2,11 @@
 'use client'
 import { useSession } from '@/lib/auth-client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { Diamond, CreditCard } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import toast from 'react-hot-toast'
-export default function UpgradePage() {
+ function UpgradePageContent() {
   const [showSaveCard, setShowSaveCard] =useState(false)
 const router = useRouter()
 const searchParams = useSearchParams()
@@ -251,4 +251,10 @@ const redirectTo =
     </section>
   )
 }
-
+export default function UpgradePage() {
+  return (
+    <Suspense fallback={null}>
+      <UpgradePageContent />
+    </Suspense>
+  )
+}

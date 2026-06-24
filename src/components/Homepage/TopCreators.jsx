@@ -33,7 +33,7 @@ export default function TopCreators() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/top-creators')
+    fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/top-creators`)
       .then((res) => res.json())
       .then((data) => {
         setCreators(data.data || [])

@@ -41,7 +41,7 @@ const [reviews, setReviews] =
     );
 
     const res = await fetch(
-      `http://localhost:8080/api/prompts/${prompt._id}/copy`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/prompts/${prompt._id}/copy`,
       {
         method: 'PATCH',
       }
@@ -66,7 +66,7 @@ const handleRating =
   async value => {
     try {
       const res = await fetch(
-        `http://localhost:8080/api/prompts/${prompt._id}/rating`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/prompts/${prompt._id}/rating`,
         {
           method: 'PATCH',
           headers: {
@@ -107,7 +107,7 @@ const handleRating =
     text: reviewText,
   }
 
-  const res = await fetch('http://localhost:8080/api/reviews', {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/reviews`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -128,7 +128,7 @@ const handleRating =
 
 const fetchReviews = async () => {
   const res = await fetch(
-    `http://localhost:8080/api/reviews/${prompt._id}`
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/reviews/${prompt._id}`
   )
 
   const data = await res.json()
@@ -147,7 +147,7 @@ useEffect(() => {
   if (!session?.user?.email) return
 
   fetch(
-    `http://localhost:8080/api/users/premium/${session.user.email}`
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/premium/${session.user.email}`
   )
     .then(res => res.json())
     .then(data =>

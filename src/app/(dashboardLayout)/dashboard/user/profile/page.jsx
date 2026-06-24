@@ -22,7 +22,7 @@ const [isPremium, setIsPremium] =
 
     try {
       const res = await fetch(
-        `http://localhost:8080/api/users/premium/${session.user.email}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/premium/${session.user.email}`
       )
 
       const data = await res.json()

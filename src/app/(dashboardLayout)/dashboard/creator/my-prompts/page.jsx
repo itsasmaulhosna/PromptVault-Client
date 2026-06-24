@@ -15,7 +15,7 @@ export default function MyPromptsPage() {
   const fetchPrompts = async () => {
     try {
       const res = await fetch(
-        'http://localhost:8080/api/prompts'
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/prompts`
       )
 
       const data = await res.json()
@@ -41,7 +41,7 @@ export default function MyPromptsPage() {
 
     try {
       const res = await fetch(
-        `http://localhost:8080/api/prompts/${id}`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/prompts/${id}`,
         {
           method: 'DELETE',
         }

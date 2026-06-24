@@ -17,7 +17,7 @@ export default function MyPromptsPage() {
 
       try {
         const res = await fetch(
-          `http://localhost:8080/api/prompts/user/${session.user.email}`
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/prompts/user/${session.user.email}`
         )
 
         const data = await res.json()
